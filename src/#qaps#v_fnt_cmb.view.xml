@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_VIEW" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD25V>
+    <VIEWNAME>/QAPS/V_FNT_CMB</VIEWNAME>
+    <AS4LOCAL>A</AS4LOCAL>
+    <DDLANGUAGE>P</DDLANGUAGE>
+    <AGGTYPE>V</AGGTYPE>
+    <ROOTTAB>/QAPS/FONTE_CMB</ROOTTAB>
+    <DDTEXT>Fonte de Câmbio</DDTEXT>
+    <VIEWCLASS>C</VIEWCLASS>
+    <CUSTOMAUTH>A</CUSTOMAUTH>
+    <GLOBALFLAG>X</GLOBALFLAG>
+   </DD25V>
+   <DD26V_TABLE>
+    <DD26V>
+     <VIEWNAME>/QAPS/V_FNT_CMB</VIEWNAME>
+     <TABNAME>/QAPS/FONTE_CMB</TABNAME>
+     <TABPOS>0001</TABPOS>
+     <FORTABNAME>/QAPS/FONTE_CMB</FORTABNAME>
+    </DD26V>
+   </DD26V_TABLE>
+   <DD27P_TABLE>
+    <DD27P>
+     <VIEWFIELD>MANDT</VIEWFIELD>
+     <TABNAME>/QAPS/FONTE_CMB</TABNAME>
+     <FIELDNAME>MANDT</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+    </DD27P>
+    <DD27P>
+     <VIEWFIELD>ID_FONTE</VIEWFIELD>
+     <TABNAME>/QAPS/FONTE_CMB</TABNAME>
+     <FIELDNAME>ID_FONTE</FIELDNAME>
+     <KEYFLAG>X</KEYFLAG>
+    </DD27P>
+    <DD27P>
+     <VIEWFIELD>DESCRICAO</VIEWFIELD>
+     <TABNAME>/QAPS/FONTE_CMB</TABNAME>
+     <FIELDNAME>DESCRICAO</FIELDNAME>
+    </DD27P>
+   </DD27P_TABLE>
+   <TABL_EXTRAS>
+    <TDDAT>
+     <TABNAME>/QAPS/V_FNT_CMB</TABNAME>
+     <CCLASS>&amp;NC&amp;</CCLASS>
+    </TDDAT>
+   </TABL_EXTRAS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

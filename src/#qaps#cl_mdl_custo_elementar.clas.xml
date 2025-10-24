@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>/QAPS/CL_MDL_CUSTO_ELEMENTAR</CLSNAME>
+    <LANGU>P</LANGU>
+    <DESCRIPT>QAPS: Model Custo Elementar</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>M01</KEY>
+     <ENTRY>Deseja excluir o item selecionado?</ENTRY>
+     <LENGTH>68</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>M02</KEY>
+     <ENTRY>Deseja ativar o item selecionado?</ENTRY>
+     <LENGTH>66</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>M03</KEY>
+     <ENTRY>Deseja desativar o item selecionado?</ENTRY>
+     <LENGTH>72</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>M04</KEY>
+     <ENTRY>Deseja atrubir Categ. de Transporte aos materiais selecionados?</ENTRY>
+     <LENGTH>126</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>M05</KEY>
+     <ENTRY>Deseja desvincular as Categ. de Transporte dos materiais selecionados?</ENTRY>
+     <LENGTH>132</LENGTH>
+    </item>
+   </TPOOL>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>CREATE_VARIAVEL</CMPNAME>
+     <SCONAME>IS_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Custo Elementar</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>DELETE_VARIAVEL</CMPNAME>
+     <SCONAME>IT_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Tipo Lista</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>EDIT_VARIAVEL</CMPNAME>
+     <SCONAME>IT_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Custo Elementar</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_VARIAVEIS_BY_TIPO_LISTA</CMPNAME>
+     <SCONAME>IV_ID_PARENT</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Id de Custo Elementar</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_VARIAVEIS_BY_TIPO_LISTA</CMPNAME>
+     <SCONAME>IV_ID_TP_LISTA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Id Simulação</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_VARIAVEIS_BY_TIPO_LISTA</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Custo Elementar</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_VARIAVEL</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Custo Elementar</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_VARIAVEL_BY_ID</CMPNAME>
+     <SCONAME>IV_ID_CUSTO_ELEMENTAR</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Id de Custo Elementar</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_VARIAVEL_BY_ID</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Custo Elementar</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>PREENCHER_MASTER_DATA</CMPNAME>
+     <SCONAME>CS_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Material Pricing</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
+  </asx:values>
+ </asx:abap>
+</abapGit>

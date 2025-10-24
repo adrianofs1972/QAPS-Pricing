@@ -1,0 +1,6 @@
+PROCESS BEFORE OUTPUT.
+  MODULE initialize.
+
+PROCESS AFTER INPUT.
+  MODULE exit_command AT EXIT-COMMAND.
+  MODULE screen_command.

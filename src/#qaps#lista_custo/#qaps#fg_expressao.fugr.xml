@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>Calculos de Expressão</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>/QAPS/LFG_EXPRESSAOD01</SOBJ_NAME>
+    <SOBJ_NAME>/QAPS/LFG_EXPRESSAOTOP</SOBJ_NAME>
+    <SOBJ_NAME>/QAPS/SAPLFG_EXPRESSAO</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>/QAPS/FM_CALCULAR_EXPRESSAO</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Calcular Expressão</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IS_SIMULACAO</PARAMETER>
+       <TYP>/QAPS/SIMULACAO</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IS_EXPRESSAO</PARAMETER>
+       <TYP>/QAPS/S_EXPRESSAO</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IT_PARAMETROS</PARAMETER>
+       <TYP>/QAPS/T_CALC_PARAMETER</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXPORT>
+      <RSEXP>
+       <PARAMETER>EV_VALOR</PARAMETER>
+       <TYP>/QAPS/VALOR_ABSOLUTO</TYP>
+      </RSEXP>
+      <RSEXP>
+       <PARAMETER>EV_PERCENTUAL</PARAMETER>
+       <TYP>/QAPS/PERCENTUAL</TYP>
+      </RSEXP>
+     </EXPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IS_SIMULACAO</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>QAPS: Simulação Pricing</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IS_EXPRESSAO</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Expressão</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IT_PARAMETROS</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Calc Parameter</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>EV_VALOR</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Valor Absoluto</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>EV_PERCENTUAL</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Percentual</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+    <item>
+     <FUNCNAME>/QAPS/FM_CRIAR_EXPRESSAO</FUNCNAME>
+     <SHORT_TEXT>Criar Expressão</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IS_EXPRESSAO</PARAMETER>
+       <TYP>/QAPS/CALC_NODE</TYP>
+      </RSIMP>
+      <RSIMP>
+       <PARAMETER>IT_PARAMETROS</PARAMETER>
+       <TYP>/QAPS/T_CALC_NODE</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IS_EXPRESSAO</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>QAPS: Calculation Node</STEXT>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IT_PARAMETROS</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>QAPS: Calculation Node</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

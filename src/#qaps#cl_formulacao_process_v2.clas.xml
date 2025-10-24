@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>/QAPS/CL_FORMULACAO_PROCESS_V2</CLSNAME>
+    <LANGU>P</LANGU>
+    <DESCRIPT>Processo de Formulação</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>FORMULAR</CMPNAME>
+     <SCONAME>ET_HEADER</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Formulação - Cabeçalho</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>FORMULAR</CMPNAME>
+     <SCONAME>ET_ITEMS</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Formulação - Item</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>FORMULAR</CMPNAME>
+     <SCONAME>ET_NG</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Teores</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>FORMULAR</CMPNAME>
+     <SCONAME>ET_NIVEIS_GARANTIA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Formulação: Níveis de Garantia</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>FORMULAR</CMPNAME>
+     <SCONAME>ET_RE</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Restrições</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>FORMULAR</CMPNAME>
+     <SCONAME>EV_NUMBER</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Nº mensagem</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>FORMULAR</CMPNAME>
+     <SCONAME>EV_TYPE</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Ctg.mens.: S sucesso, E erro, W aviso, I inform., A cancel.</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>FORMULAR</CMPNAME>
+     <SCONAME>IS_HEADER</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Input - Formulação</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>FORMULAR</CMPNAME>
+     <SCONAME>IT_PC_PARAM</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Componentes</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>FORMULAR</CMPNAME>
+     <SCONAME>IT_RS_PARAM</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Características</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
+  </asx:values>
+ </asx:abap>
+</abapGit>

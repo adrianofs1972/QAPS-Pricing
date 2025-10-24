@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>/QAPS/CL_VIEW_ITEM_REL_0002</CLSNAME>
+    <LANGU>P</LANGU>
+    <DESCRIPT>QAPS: Relatório 0002</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_DATA</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Retorno Custo Final</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_EXIBICAO</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Exibição Custo</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_LISTA_CUSTO</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Lista Header</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_PERIODO</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Período</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_CATALOG</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_DATA</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Relaório 0002</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_PREVIOUS_FCAT</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MV_SELECTED_MOEDA</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Código de função</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MV_SELECTED_VALOR</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Código de função</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>CREATE_DYNAMIC_CATALOG</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CREATE_DYNAMIC_TABLE</CMPNAME>
+     <SCONAME>IT_FCAT</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_COLOR_TABLE</CMPNAME>
+     <SCONAME>IV_PRODUCAO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Código de um caractere</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_COLOR_TABLE</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Controle VLA: tabela para coloração de células</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_ID_PONDERACAO</CMPNAME>
+     <SCONAME>IS_LISTA_CUSTO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Lista Custo</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_ID_PONDERACAO</CMPNAME>
+     <SCONAME>IT_PONDERACAO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Ponderação</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_ID_PONDERACAO</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Ponderação</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>SET_SESSION_DATA</CMPNAME>
+     <SCONAME>IS_EXIBICAO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Exibição Custo</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>SET_SESSION_DATA</CMPNAME>
+     <SCONAME>IS_LISTA_CUSTO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Lista Header</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>SET_SESSION_DATA</CMPNAME>
+     <SCONAME>IS_PERIODO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Período</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
+  </asx:values>
+ </asx:abap>
+</abapGit>

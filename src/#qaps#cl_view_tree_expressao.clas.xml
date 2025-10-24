@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>/QAPS/CL_VIEW_TREE_EXPRESSAO</CLSNAME>
+    <LANGU>P</LANGU>
+    <DESCRIPT>QAPS: Tree Expressão</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>MO_BEHAVIOUR_SRC</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Behavior for Drag and Drop</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MO_BEHAVIOUR_TRG</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Behavior for Drag and Drop</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>ON_NODE_ADDED</CMPNAME>
+     <SCONAME>IV_ACTION</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Código de um caractere</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>ON_NODE_REMOVE</CMPNAME>
+     <SCONAME>IV_ACTION</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Código de um caractere</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>ON_NODE_REMOVE</CMPNAME>
+     <SCONAME>IV_FCODE</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Campo do sistema ABAP: código de função que acionou o PAI</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>SORT_TABLE</CMPNAME>
+     <SCONAME>CT_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Calculation Node</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>UPDATE_NODE_CONTENT</CMPNAME>
+     <SCONAME>IS_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Calcuation Nodes</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
+  </asx:values>
+ </asx:abap>
+</abapGit>

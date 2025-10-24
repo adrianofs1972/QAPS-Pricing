@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <AREAT>Matriz de Abastecimento</AREAT>
+   <INCLUDES>
+    <SOBJ_NAME>/QAPS/LFG_MATRIZ_ABASTTOP</SOBJ_NAME>
+    <SOBJ_NAME>/QAPS/SAPLFG_MATRIZ_ABAST</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>/QAPS/FM_INIT_MATRIZ_ABAST</FUNCNAME>
+     <REMOTE_CALL>R</REMOTE_CALL>
+     <SHORT_TEXT>Inicializar/Atualizar Matriz de Abastecimento</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>IV_ID_SIMULACAO</PARAMETER>
+       <TYP>/QAPS/ED_ID_SIMULACAO</TYP>
+      </RSIMP>
+     </IMPORT>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>IV_ID_SIMULACAO</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Id Simulação</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

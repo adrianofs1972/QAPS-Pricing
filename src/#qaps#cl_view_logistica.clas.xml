@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>/QAPS/CL_VIEW_LOGISTICA</CLSNAME>
+    <LANGU>P</LANGU>
+    <DESCRIPT>QAPS: Tipo Lista x Aprovadores</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_DATA</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Tipo Lista x Aprovador</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>CUSTOMIZE_CAT_CAIS</CMPNAME>
+     <SCONAME>CT_CATALOG</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CUSTOMIZE_CAT_CENTROS</CMPNAME>
+     <SCONAME>CT_CATALOG</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CUSTOMIZE_CAT_CENTRO_PORTO</CMPNAME>
+     <SCONAME>CT_CATALOG</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CUSTOMIZE_CAT_CIDADE</CMPNAME>
+     <SCONAME>CT_CATALOG</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CUSTOMIZE_CAT_CLIENTE</CMPNAME>
+     <SCONAME>CT_CATALOG</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CUSTOMIZE_CAT_FORNECEDOR</CMPNAME>
+     <SCONAME>CT_CATALOG</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CUSTOMIZE_CAT_GRP_CLIENTE</CMPNAME>
+     <SCONAME>CT_CATALOG</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CUSTOMIZE_CAT_GRP_PLANTA</CMPNAME>
+     <SCONAME>CT_CATALOG</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CUSTOMIZE_CAT_PONTO</CMPNAME>
+     <SCONAME>CT_CATALOG</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CUSTOMIZE_CAT_PORTO</CMPNAME>
+     <SCONAME>CT_CATALOG</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CUSTOMIZE_CAT_REGIAO</CMPNAME>
+     <SCONAME>CT_CATALOG</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CUSTOMIZE_CAT_TRAJETO</CMPNAME>
+     <SCONAME>CT_CATALOG</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CUSTOMIZE_CAT_TRECHO</CMPNAME>
+     <SCONAME>CT_CATALOG</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
+  </asx:values>
+ </asx:abap>
+</abapGit>

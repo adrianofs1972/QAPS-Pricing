@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>/QAPS/CL_FORM_PROC_SINGLE_TSK</CLSNAME>
+    <LANGU>P</LANGU>
+    <DESCRIPT>Formulação: Processo Paralelo</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>GV_CHKEY</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Código Propriedade / Característica</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>GV_REFORMULATE</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Flag geral</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_DATA</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Processamento de Fórmultas</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>CALL_FM</CMPNAME>
+     <SCONAME>CS_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Processamento de Fórmultas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CALL_FM</CMPNAME>
+     <SCONAME>EV_CHKEY</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Código Propriedade / Característica</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CALL_FM</CMPNAME>
+     <SCONAME>EV_REFORMULATE</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Flag geral</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>EXECUTE</CMPNAME>
+     <SCONAME>CS_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Processamento de Fórmultas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>INCREMENT_CARACTERISTICA</CMPNAME>
+     <SCONAME>CT_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Características</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>INCREMENT_CARACTERISTICA</CMPNAME>
+     <SCONAME>IV_CHKEY</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Código Propriedade / Característica</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
+  </asx:values>
+ </asx:abap>
+</abapGit>

@@ -1,0 +1,7 @@
+PROCESS BEFORE OUTPUT.
+  MODULE status_2000.
+
+PROCESS AFTER INPUT.
+  MODULE exit_command AT EXIT-COMMAND.
+  MODULE user_command_2000.
+

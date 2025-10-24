@@ -1,0 +1,11 @@
+PROCESS BEFORE OUTPUT.
+  MODULE status_1000.
+
+PROCESS AFTER INPUT.
+  MODULE exit_command AT EXIT-COMMAND.
+
+  CHAIN.
+    FIELD gs_data-id_modal MODULE modal.
+  ENDCHAIN.
+
+  MODULE user_command_1000.

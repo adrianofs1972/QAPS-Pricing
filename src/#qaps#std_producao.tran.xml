@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TRAN" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <TSTC>
+    <TCODE>/QAPS/STD_PRODUCAO</TCODE>
+    <PGMNA>/QAPS/REP_STD_PRODUCAO</PGMNA>
+    <DYPNO>0500</DYPNO>
+   </TSTC>
+   <TSTCC>
+    <TCODE>/QAPS/STD_PRODUCAO</TCODE>
+   </TSTCC>
+   <TSTCT>
+    <SPRSL>P</SPRSL>
+    <TCODE>/QAPS/STD_PRODUCAO</TCODE>
+    <TTEXT>Std de Produção</TTEXT>
+   </TSTCT>
+  </asx:values>
+ </asx:abap>
+</abapGit>

@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>/QAPS/CL_MDL_REL_0002</CLSNAME>
+    <LANGU>P</LANGU>
+    <DESCRIPT>QAPS: Model Relatório 0002</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>M01</KEY>
+     <ENTRY>Deseja excluir o item selecionado?</ENTRY>
+     <LENGTH>68</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>M02</KEY>
+     <ENTRY>Deseja ativar o item selecionado?</ENTRY>
+     <LENGTH>66</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>M03</KEY>
+     <ENTRY>Deseja desativar o item selecionado?</ENTRY>
+     <LENGTH>72</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>M04</KEY>
+     <ENTRY>Deseja vincular Std de Produção à simulação?</ENTRY>
+     <LENGTH>88</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>M05</KEY>
+     <ENTRY>Deseja vincular Std de Produção das simulações selecionadas?</ENTRY>
+     <LENGTH>120</LENGTH>
+    </item>
+   </TPOOL>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_PERIODO</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Período</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_CATALOG</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>CREATE_DYNAMIC_CATALOG</CMPNAME>
+     <SCONAME>IS_TIPO_LISTA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Retorno Cálculo</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CREATE_DYNAMIC_CATALOG</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CREATE_DYNAMIC_TABLE</CMPNAME>
+     <SCONAME>IT_FCAT</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>DATA_TREATMENT_FOR_EXPORT</CMPNAME>
+     <SCONAME>CT_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Relaório 0002</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>EXPORTAR</CMPNAME>
+     <SCONAME>IV_COD_LISTA_CUSTO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Lista Custo</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GENERATE_LISTA_CUSTO</CMPNAME>
+     <SCONAME>IV_COD_LISTA_CUSTO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Código Lista Custo</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_DISPLAY_NAME_MAPPING</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Display Name Mapping</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_ITEMS</CMPNAME>
+     <SCONAME>IS_EXIBICAO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Exibição Custo</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_ITEMS</CMPNAME>
+     <SCONAME>IV_COD_LISTA_CUSTO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Código Lista Custo</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_ITEMS</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Relaório 0002</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_LISTA_CUSTO</CMPNAME>
+     <SCONAME>IV_COD_LISTA_CUSTO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Id Tipo de Lista Pricing</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_LISTA_CUSTO</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS Simulação</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_NEXT_ID</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Id Simulação</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_REFERENCIAS</CMPNAME>
+     <SCONAME>IT_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS Simulação</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_REFERENCIAS</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS Simulação</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_SINGLE_LISTA_CUSTO</CMPNAME>
+     <SCONAME>IV_COD_LISTA_CUSTO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Id Tipo de Lista Pricing</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_SINGLE_LISTA_CUSTO</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS Simulação</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_TAB_HEADER</CMPNAME>
+     <SCONAME>IS_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Lista Header</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_TAB_HEADER</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Chave/Valor</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_TAB_HELP</CMPNAME>
+     <SCONAME>IS_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Lista Header</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_TAB_HELP</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Chave/Valor</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_TAXA_CAMBIO</CMPNAME>
+     <SCONAME>IS_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Lista de Custos - Header</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_TAXA_CAMBIO</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Taxa de Câmbio ativa por período</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>MERGE_DATA</CMPNAME>
+     <SCONAME>IS_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Retorno Custo Final</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>MERGE_DATA</CMPNAME>
+     <SCONAME>IT_FCAT</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Catálogo de campos para controle visor de listas</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>MERGE_DATA</CMPNAME>
+     <SCONAME>IV_MOEDA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Moeda Cálculo</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>MERGE_DATA</CMPNAME>
+     <SCONAME>IV_PERIODO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Período Inicial</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>SET_PERIODO</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Período</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>UPDATE_CONTENT</CMPNAME>
+     <SCONAME>IV_COD_LISTA_CUSTO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Lista Header</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>UPDATE_CONTENT</CMPNAME>
+     <SCONAME>IV_STATUS</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Status Lista Custo</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>UPDATE_STATUS_LISTA_CUSTO</CMPNAME>
+     <SCONAME>IV_COD_LISTA_CUSTO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Id Lista de Custos</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>UPDATE_STATUS_LISTA_CUSTO</CMPNAME>
+     <SCONAME>IV_STATUS</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Status Lista Custo</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
+  </asx:values>
+ </asx:abap>
+</abapGit>

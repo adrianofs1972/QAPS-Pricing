@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>/QAPS/CL_FILE_CST_ELEM_IMPORT</CLSNAME>
+    <LANGU>P</LANGU>
+    <DESCRIPT>QAPS: File Custo Elementar Import</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>M01</KEY>
+     <ENTRY>Deseja importar os dados? Dados anteriores serão sobrescritos!</ENTRY>
+     <LENGTH>124</LENGTH>
+    </item>
+   </TPOOL>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>CONSTRUCTOR</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>CONSTRUCTOR</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MO_GR_ALV</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Basis Class for Simple Tables</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MO_LOGISTICA</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Model Logística</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MO_MATERIAL</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Model Tipo Lista</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_CUSTO_ELM</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Custo Elementar</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_MAPPING</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Mapeamento Arquivo</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_SIMULACAO</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS Simulação</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_CATEG_TRANSPORTE</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Categoria de Transporte</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_CUSTO_ELEMENTAR</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Custo Elementar</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_CUSTO_PROCESSO</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Custo Processo</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_DATA</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Input Element Log</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_DATA_PARTIAL</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Input Element Log</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_ERRORS</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Tabela de retorno</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_PERIODO</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: File Mapping</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_TRECHO</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Trecho</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MV_ID</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>2 Byte Integer (Signed)</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_CATEG_TRANSPORTE</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Categoria de Transporte</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_CUSTO_ELEMENTAR</CMPNAME>
+     <SCONAME>IV_ID_CUSTO_ELEMENTAR</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Id de Custo Elementar</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_CUSTO_ELEMENTAR</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Custo Elementar</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_CUSTO_PROCESSO</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Categoria de Transporte</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_TRECHO</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Trecho</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>VALIDATE</CMPNAME>
+     <SCONAME>CS_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Std Prd Log Impoprtação</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
+  </asx:values>
+ </asx:abap>
+</abapGit>
