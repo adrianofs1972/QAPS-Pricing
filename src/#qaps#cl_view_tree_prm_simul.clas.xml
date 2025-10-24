@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>/QAPS/CL_VIEW_TREE_PRM_SIMUL</CLSNAME>
+    <LANGU>P</LANGU>
+    <DESCRIPT>QAPS: Premissa - Tree Simulações</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>MC_GUID_NULL</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Elemento de dados geral para campos ID único (X16)</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_SIMULACAO</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS Simulação</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MV_DESTINO</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Parâmetro de contagem</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>ADD_CHILD_NODE_DESTINO</CMPNAME>
+     <SCONAME>IV_PARENT</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Tree Model: chave de um nó</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>ADD_CHILD_NODE_SIMULACAO</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Tree Model: chave de um nó</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>ADD_CHILD_NODE_TIPO</CMPNAME>
+     <SCONAME>IV_PARENT</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Tree Model: chave de um nó</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>ADD_CHILD_NODE_TIPO</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Tree Model: chave de um nó</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>SET_SESSION_DATA</CMPNAME>
+     <SCONAME>IS_SIMULACAO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS Simulação</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
+  </asx:values>
+ </asx:abap>
+</abapGit>

@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>/QAPS/CL_MDL_REL_0001</CLSNAME>
+    <LANGU>P</LANGU>
+    <DESCRIPT>QAPS: Model Std Produção</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <TPOOL>
+    <item>
+     <ID>I</ID>
+     <KEY>M01</KEY>
+     <ENTRY>Deseja excluir o item selecionado?</ENTRY>
+     <LENGTH>68</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>M02</KEY>
+     <ENTRY>Deseja ativar o item selecionado?</ENTRY>
+     <LENGTH>66</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>M03</KEY>
+     <ENTRY>Deseja desativar o item selecionado?</ENTRY>
+     <LENGTH>72</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>M04</KEY>
+     <ENTRY>Confirma a importação de dados?</ENTRY>
+     <LENGTH>62</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
+     <KEY>M05</KEY>
+     <ENTRY>Há dados contidos no arquivo que já existem na base. Deseja sobrescrevê-los ou atualizá-los?</ENTRY>
+     <LENGTH>132</LENGTH>
+    </item>
+   </TPOOL>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>MS_HEADER</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Std Produção - Header</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_CENTRO</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Centro</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_GRP_PLANTA</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Grupo de Plantas</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>MT_REGIAO</CMPNAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: Região</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>CALCULATE</CMPNAME>
+     <SCONAME>CT_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Relatório 0001 - Relatório Custo Comparativo</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>FILL_DESCRICOES</CMPNAME>
+     <SCONAME>CS_DATA</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Std Produção - Header</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_ITEMS</CMPNAME>
+     <SCONAME>IS_HEADER</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Relatório Custo Comparativo - Header</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_ITEMS</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Relatório 0001 - Relatório Custo Comparativo</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_LISTA_CUSTO</CMPNAME>
+     <SCONAME>IV_COD_LISTA_CUSTO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Código Lista Custo</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_LISTA_CUSTO</CMPNAME>
+     <SCONAME>IV_PERIODO</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Período de análise - mês</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>GET_LISTA_CUSTO</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Lista de Custos em Tabela</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>MERGE_DATA</CMPNAME>
+     <SCONAME>IT_COMP</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Lista de Custos em Tabela</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>MERGE_DATA</CMPNAME>
+     <SCONAME>IT_REF</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Lista de Custos em Tabela</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>MERGE_DATA</CMPNAME>
+     <SCONAME>RETURN</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Relatório 0001 - Relatório Custo Comparativo</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>QUESTION</CMPNAME>
+     <SCONAME>IV_TEXT_BUTTON_1</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Campo de texto de comprimento 12</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>QUESTION</CMPNAME>
+     <SCONAME>IV_TEXT_BUTTON_2</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Campo de texto de comprimento 12</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>UPDATE_HEADER</CMPNAME>
+     <SCONAME>IS_HEADER</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Std Produção - Header</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>VALIDATE</CMPNAME>
+     <SCONAME>/QAPS/CX_PRICING_ERROR</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>QAPS: General Exception</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>VALIDATE</CMPNAME>
+     <SCONAME>IS_HEADER</SCONAME>
+     <LANGU>P</LANGU>
+     <DESCRIPT>Relatório Custo Comparativo - Header</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
+  </asx:values>
+ </asx:abap>
+</abapGit>

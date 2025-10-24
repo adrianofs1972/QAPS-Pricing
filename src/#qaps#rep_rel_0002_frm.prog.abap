@@ -1,0 +1,31 @@
+*----------------------------------------------------------------------*
+***INCLUDE /QAPS/REP_TIPO_LISTA_FRM.
+*----------------------------------------------------------------------*
+
+*&---------------------------------------------------------------------*
+*&      Form  INITIALIZE
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM initialize .
+
+  SET TITLEBAR '1000'.
+
+  IF gv_detail = abap_true.
+    SET PF-STATUS 'DETAIL'.
+  ELSEIF gv_tree_visible = abap_true.
+    SET PF-STATUS '1000' EXCLUDING 'SHOW'.
+  ELSE.
+    SET PF-STATUS '1000' EXCLUDING 'HIDE'.
+  ENDIF.
+
+  IF NOT go_controller IS BOUND.
+    go_controller = NEW /qaps/cl_ctrl_rel_0002( ).
+  ENDIF.
+
+  go_controller->initialize( io_container = cl_gui_container=>default_screen ).
+
+ENDFORM.
