@@ -4,6 +4,8 @@
   <asx:values>
    <DDLS>
     <DDLNAME>/QAPS/CDS_DIST_LOG</DDLNAME>
+    <DDLANGUAGE>P</DDLANGUAGE>
+    <SOURCE_TYPE>V</SOURCE_TYPE>
    </DDLS>
   </asx:values>
  </asx:abap>

@@ -63,6 +63,17 @@ private section.
       !IV_ID_DISTRIBUICAO type /QAPS/ED_ID_DISTRIBUICAO
     returning
       value(RETURN) type /QAPS/T_FULL_TRJ .
+  methods GET_DISTRIBUICAO_TRAJETO
+    importing
+      !IV_ID_DISTRIBUICAO type /QAPS/ED_ID_DISTRIBUICAO
+      !IV_ID_TRAJETO type /QAPS/ED_ID_TRAJETO
+    returning
+      value(RETURN) type /QAPS/T_PREM_TRAJ .
+  methods GET_DISTRIBUICAO_PREMISSA
+    importing
+      !IV_ID_DISTRIBUICAO type /QAPS/ED_ID_DISTRIBUICAO
+    returning
+      value(RETURN) type /QAPS/T_PREM_DISTR .
   methods GET_PREMISSA_TRAJETO
     importing
       !IV_ID_DISTRIBUICAO type /QAPS/ED_ID_DISTRIBUICAO
@@ -230,7 +241,7 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
 
     "Criar Linhas
 
-*    break c060863.
+*    break abap.
     LOOP AT lt_data ASSIGNING FIELD-SYMBOL(<fs_data>).
 
       <fs_data>-matnr = |{ <fs_data>-matnr ALPHA = IN WIDTH = 18 }|.
@@ -321,6 +332,8 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
       ENDIF.
 
     ENDLOOP.
+
+*    break abap.
 
     "Preenchar Linhas
     DATA(lt_data_outros) = lt_data.
@@ -442,9 +455,10 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
   METHOD fill_ponderacao_outros.
 
     DATA: lv_matnr_in  TYPE matnr,
-          lv_matnr_out TYPE matnr.
+          lv_matnr_out TYPE matnr,
+          lv_where     TYPE string.
 
-    data: lt_distribuicao TYPE /qaps/t_prem_distr,
+    DATA: lt_distribuicao TYPE /qaps/t_prem_distr,
           lt_trajeto      TYPE /qaps/t_prem_traj.
 
     cs_ponderacao-items = lines( it_source ).
@@ -456,14 +470,22 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
     lv_matnr_in = |{ cs_ponderacao-matnr ALPHA = IN WIDTH = 18 }|.
     lv_matnr_out = |{ cs_ponderacao-matnr ALPHA = OUT }|.
 
+    if not cs_ponderacao-cod_grp_planta is INITIAL and not cs_ponderacao-werks is INITIAL.
+      lv_where = ` grp_planta = @cs_ponderacao-cod_grp_planta  `.
+      lv_where = lv_where && ` and werks      = @cs_ponderacao-werks `.
+    elseif cs_ponderacao-cod_grp_planta is INITIAL and not cs_ponderacao-werks is INITIAL.
+      lv_where = ` werks      = @cs_ponderacao-werks `.
+    elseif not cs_ponderacao-cod_grp_planta is INITIAL and cs_ponderacao-werks is INITIAL.
+      lv_where = ` grp_planta = @cs_ponderacao-cod_grp_planta  `.
+    endif.
+
     SELECT *
       FROM /qaps/v_prm_full
       FOR ALL ENTRIES IN @it_source
       WHERE id_simulacao = @it_source-id_simulacao
       AND   id_premissa  = @it_source-id_premissa
       AND   tipo_regra = 'MA'
-      AND   grp_planta = @cs_ponderacao-cod_grp_planta
-      AND   werks      = @cs_ponderacao-werks
+      AND   (lv_where)
       AND   ( matnr    = @lv_matnr_in OR  matnr    = @lv_matnr_out )
       INTO TABLE @DATA(lt_prm_full).
 
@@ -490,10 +512,10 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
     ENDIF.
 
     fill_total_outros( EXPORTING it_distribuicao = lt_distribuicao
-                                 IT_PRODUCAO     = it_std_prd
+                                 it_producao     = it_std_prd
                                  it_trajeto      = lt_trajeto
                                  it_source       = it_source
-                       CHANGING  cs_ponderacao   = cs_ponderacao  ).
+                       CHANGING  cs_ponderacao   = cs_ponderacao ).
 
   ENDMETHOD.
 
@@ -578,6 +600,9 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
   METHOD fill_total_outros.
 
     DATA lo_calc_outros TYPE REF TO /qaps/cl_custo_calc_sum_outros.
+    DATA: lv_premissa    TYPE /qaps/prem_distr-percentual,
+          lv_trajeto     TYPE /qaps/prem_distr-percentual,
+          lv_coeficiente TYPE /qaps/prem_distr-percentual.
 
     IF lines( it_producao ) = 0.
 
@@ -592,17 +617,27 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
 
           LOOP AT ls_exp_source-t_valores INTO DATA(ls_valores).
 
-*          DATA(ls_distribuicao) = it_distribuicao[ matnr = ls_source-matnr
-*                                                    ].
-*          DATA(ls_trajeto) = it_trajeto[ matnr = ls_source-matnr ].
-
             ASSIGN <fs_exp_target>-t_valores[ periodo = ls_valores-periodo ]
                 TO FIELD-SYMBOL(<fs_val_target>).
 
-            <fs_val_target>-valor = ls_valores-valor + <fs_val_target>-valor.
-            <fs_val_target>-valor_var_elementar = ls_valores-valor_var_elementar + <fs_val_target>-valor_var_elementar.
-            <fs_val_target>-valor_moeda_final = ls_valores-valor_moeda_final + <fs_val_target>-valor_moeda_final.
-            <fs_val_target>-percentual = ls_valores-percentual + <fs_val_target>-percentual.
+            DATA(ls_premissa) = ls_source-t_dist_premissa[ periodo = ls_valores-periodo ].
+            DATA(ls_trajeto)  = ls_source-trajeto-t_dist_trajeto[ periodo = ls_valores-periodo ].
+
+            lv_premissa = ls_premissa-percentual / 100 .
+            lv_trajeto = ls_trajeto-percentual / 100 .
+*            IF lv_trajeto =  0.
+*              lv_trajeto = 1.
+*            ENDIF.
+
+            lv_coeficiente = lv_premissa * lv_trajeto.
+
+            <fs_val_target>-valor = <fs_val_target>-valor + ( ls_valores-valor * lv_coeficiente ).
+            <fs_val_target>-valor_var_elementar = <fs_val_target>-valor_var_elementar
+                      + ( ls_valores-valor_var_elementar * lv_coeficiente ).
+            <fs_val_target>-valor_moeda_final = <fs_val_target>-valor_moeda_final
+                + ( ls_valores-valor_moeda_final * lv_coeficiente ).
+            <fs_val_target>-percentual = <fs_val_target>-percentual
+                + ( ls_valores-percentual  * lv_coeficiente ).
 
           ENDLOOP.
 
@@ -643,19 +678,23 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
 
     ENDIF.
 
-    DATA(lt_taxa_cambio) = get_taxa_cambio( iv_fonte       =  ms_lista_custo-dsc_fonte
-                                            iv_moeda_local =  ms_lista_custo-moeda_calculo
-                                            iv_moeda_final =  ms_lista_custo-moeda_lista
-                                            is_simulacao   =  ms_simulacao  ).
+    DATA(lt_taxa_cambio) = get_taxa_cambio( iv_fonte       = ms_lista_custo-dsc_fonte
+                                            iv_moeda_local = ms_lista_custo-moeda_calculo
+                                            iv_moeda_final = ms_lista_custo-moeda_lista
+                                            is_simulacao   = ms_simulacao ).
 
-    lo_calc_outros ?= /qaps/cl_custo_calculate_base=>get_instance( iv_modalidade = 'A'
-                                                                          iv_moeda_local = ms_lista_custo-moeda_calculo
-                                                                          iv_moeda_final = ms_lista_custo-moeda_lista
-                                                                          it_taxa_cambio = lt_taxa_cambio ).
+    BREAK abap.
+
+    lo_calc_outros ?= /qaps/cl_custo_calculate_base=>get_instance( iv_modalidade  = 'A'
+                                                                   iv_moeda_local = ms_lista_custo-moeda_calculo
+                                                                   iv_moeda_final = ms_lista_custo-moeda_lista
+                                                                   it_taxa_cambio = lt_taxa_cambio ).
 
     lo_calc_outros->solve_outros_total_expressao(
-          EXPORTING is_simulacao = ms_simulacao
-          CHANGING cs_expressao = cs_ponderacao
+      EXPORTING
+        is_simulacao = ms_simulacao
+      CHANGING
+        cs_expressao = cs_ponderacao
     ).
 
 
@@ -782,7 +821,7 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
     SELECT *
       FROM /qaps/v_full_trj
       WHERE id_distribuicao = @iv_id_distribuicao
-      INTO table @return.
+      INTO CORRESPONDING FIELDS OF TABLE @return.
 
   ENDMETHOD.
 
@@ -849,11 +888,11 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
     ENDIF.
 
     DELETE return WHERE id_origem = mc_guid_null.
-
+*    break abap.
     LOOP AT return ASSIGNING FIELD-SYMBOL(<fs>).
       <fs>-t_trajetos = get_premissa_trajeto( <fs>-id_distribuicao ).
+      <fs>-t_dist_premissa = get_distribuicao_premissa( <fs>-id_distribuicao ).
     ENDLOOP.
-
 
   ENDMETHOD.
 
@@ -1038,8 +1077,7 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
 
     LOOP AT return ASSIGNING FIELD-SYMBOL(<fs_return>).
       <fs_return>-t_trajetos = get_premissa_trajeto( <fs_return>-id_distribuicao ).
-
-*      <fs_return>-t_traj_trecho = get_full_trajeto( <fs_return>-id_distribuicao ).
+      <fs_return>-t_dist_premissa = get_distribuicao_premissa( <fs>-id_distribuicao ).
     ENDLOOP.
 
 
@@ -1129,6 +1167,8 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
     APPEND LINES OF lt_result_werks TO return.
     APPEND LINES OF lt_result_grp_planta TO return.
 
+    sort return by werks matnr.
+
   ENDMETHOD.
 
 
@@ -1137,7 +1177,12 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
     SELECT *
       FROM /qaps/dist_traj
       WHERE id_distribuicao = @iv_id_distribuicao
-      INTO TABLE @return.
+      INTO CORRESPONDING FIELDS OF TABLE @return.
+
+    LOOP AT return ASSIGNING FIELD-SYMBOL(<fs>).
+      <fs>-t_dist_trajeto = get_distribuicao_trajeto( iv_id_distribuicao = <fs>-id_distribuicao
+                                                      iv_id_trajeto      = <fs>-id_trajeto ).
+    ENDLOOP.
 
   ENDMETHOD.
 
@@ -1393,10 +1438,10 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
     "Colocar simulação em memória
     set_simulacao( ms_lista_custo-id_simulacao ).
 
-    DATA(lt_taxa_cambio) = get_taxa_cambio( iv_fonte       =  lv_fonte
-                                            iv_moeda_local =  lv_moeda_local
-                                            iv_moeda_final =  lv_moeda_final
-                                            is_simulacao   =  ms_simulacao  ).
+    DATA(lt_taxa_cambio) = get_taxa_cambio( iv_fonte       = lv_fonte
+                                            iv_moeda_local = lv_moeda_local
+                                            iv_moeda_final = lv_moeda_final
+                                            is_simulacao   = ms_simulacao ).
 
     IF lines( lt_taxa_cambio ) = 0.
       RAISE EXCEPTION TYPE /qaps/cx_lista_custo_generator
@@ -1424,43 +1469,45 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
 *********************************************************
 
     "Buscar Centro/Planta - Destinos
+*    BREAK abap.
     DATA(lt_planta_material) = get_planta_material( ).
 
     "Base apenas para a pre geração do reports
-    DATA(lo_base) = NEW /qaps/cl_custo_calculate_base( iv_modalidade = ''
+    DATA(lo_base) = NEW /qaps/cl_custo_calculate_base( iv_modalidade  = ''
                                                        iv_moeda_local = lv_moeda_local
                                                        iv_moeda_final = lv_moeda_final
                                                        it_taxa_cambio = lt_taxa_cambio ).
     lo_base->pre_generate_expressoes( ms_lista_custo-id_simulacao ).
 
-    DATA(lo_calc_importacao) = /qaps/cl_custo_calculate_base=>get_instance( iv_modalidade = 'I'
+    DATA(lo_calc_importacao) = /qaps/cl_custo_calculate_base=>get_instance( iv_modalidade  = 'I'
                                                                             iv_moeda_local = lv_moeda_local
                                                                             iv_moeda_final = lv_moeda_final
-                                                                            it_taxa_cambio = lt_taxa_cambio  ).
-    DATA(lo_calc_nacional) = /qaps/cl_custo_calculate_base=>get_instance( iv_modalidade = 'N'
+                                                                            it_taxa_cambio = lt_taxa_cambio ).
+    DATA(lo_calc_nacional) = /qaps/cl_custo_calculate_base=>get_instance( iv_modalidade  = 'N'
                                                                           iv_moeda_local = lv_moeda_local
                                                                           iv_moeda_final = lv_moeda_final
                                                                           it_taxa_cambio = lt_taxa_cambio ).
-    DATA(lo_calc_producao_conv) = /qaps/cl_custo_calculate_base=>get_instance( iv_modalidade = 'P'
-                                                                          iv_moeda_local = lv_moeda_local
-                                                                          iv_moeda_final = lv_moeda_final
-                                                                          it_taxa_cambio = lt_taxa_cambio
-                                                                          iv_std_prd_type = 'C' ).
-    DATA(lo_calc_producao_prod) = /qaps/cl_custo_calculate_base=>get_instance( iv_modalidade = 'P'
-                                                                          iv_moeda_local = lv_moeda_local
-                                                                          iv_moeda_final = lv_moeda_final
-                                                                          it_taxa_cambio = lt_taxa_cambio
-                                                                          iv_std_prd_type = 'P' ).
-    DATA(lo_calc_transferencia) = /qaps/cl_custo_calculate_base=>get_instance( iv_modalidade = 'T'
+    DATA(lo_calc_producao_conv) = /qaps/cl_custo_calculate_base=>get_instance( iv_modalidade   = 'P'
+                                                                               iv_moeda_local  = lv_moeda_local
+                                                                               iv_moeda_final  = lv_moeda_final
+                                                                               it_taxa_cambio  = lt_taxa_cambio
+                                                                               iv_std_prd_type = 'C' ).
+    DATA(lo_calc_producao_prod) = /qaps/cl_custo_calculate_base=>get_instance( iv_modalidade   = 'P'
+                                                                               iv_moeda_local  = lv_moeda_local
+                                                                               iv_moeda_final  = lv_moeda_final
+                                                                               it_taxa_cambio  = lt_taxa_cambio
+                                                                               iv_std_prd_type = 'P' ).
+    DATA(lo_calc_transferencia) = /qaps/cl_custo_calculate_base=>get_instance( iv_modalidade  = 'T'
                                                                                iv_moeda_local = lv_moeda_local
                                                                                iv_moeda_final = lv_moeda_final
-                                                                               it_taxa_cambio = lt_taxa_cambio  ).
+                                                                               it_taxa_cambio = lt_taxa_cambio ).
 
     "Buscar origens por modalidade
     LOOP AT lt_planta_material INTO DATA(ls_planta_material).
 
       "IMPORTADO
       DATA(lt_origem_importacao) = get_origens( is_material = ls_planta_material iv_modalidade = 'I' ).
+      DELETE lt_origem_importacao WHERE werks <> ls_planta_material-werks.
       IF lines( lt_origem_importacao ) > 0.
         DATA(lt_imp) = lo_calc_importacao->execute( is_simulacao       = ms_simulacao
                                                     it_origem          = lt_origem_importacao
@@ -1469,8 +1516,8 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
 
         "Transferência
         REFRESH lt_origem_transf_imp.
-        lt_origem_transf_imp = get_origens_transferencia( is_material = ls_planta_material
-                                                          is_simulacao         = ms_simulacao ).
+        lt_origem_transf_imp = get_origens_transferencia( is_material  = ls_planta_material
+                                                          is_simulacao = ms_simulacao ).
         IF lines( lt_imp ) > 0 AND lines( lt_origem_transf_imp ) > 0.
           DATA(lt_trans_imp) = lo_calc_transferencia->get_transferencias( is_simulacao         = ms_simulacao
                                                                           it_origem            = lt_origem_transf_imp
@@ -1482,9 +1529,10 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
       ENDIF.
 
       "NACIONAL
-      DATA(lt_origem_nacional) = get_origens( is_material = ls_planta_material   iv_modalidade = 'N' ).
+      DATA(lt_origem_nacional) = get_origens( is_material = ls_planta_material iv_modalidade = 'N' ).
+      DELETE lt_origem_nacional WHERE werks <> ls_planta_material-werks.
       IF lines( lt_origem_nacional ) > 0.
-
+*        BREAK abap.
         DATA(lt_nac) = lo_calc_nacional->execute( is_simulacao       = ms_simulacao
                                                   it_origem          = lt_origem_nacional
                                                   is_material_centro = ls_planta_material ).
@@ -1493,8 +1541,8 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
         "Transferência
 *        BREAK c060863.
         REFRESH lt_origem_transf_nac.
-        lt_origem_transf_nac = get_origens_transferencia( is_material = ls_planta_material
-                                                          is_simulacao         = ms_simulacao ).
+        lt_origem_transf_nac = get_origens_transferencia( is_material  = ls_planta_material
+                                                          is_simulacao = ms_simulacao ).
         IF lines( lt_nac ) > 0 AND lines( lt_origem_transf_nac ) > 0.
           DATA(lt_trans_nac) = lo_calc_transferencia->get_transferencias( is_simulacao         = ms_simulacao
                                                                           it_origem            = lt_origem_transf_nac
@@ -1508,21 +1556,21 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
     ENDLOOP.
 
     "Std Produção - Conversão
+
     LOOP AT lt_planta_material INTO ls_planta_material.
-
-
-      DATA(lt_origem_producao) = get_origens( is_material = ls_planta_material   iv_modalidade = 'P' ).
+      DATA(lt_origem_producao) = get_origens( is_material = ls_planta_material iv_modalidade = 'P' ).
+      DELETE lt_origem_producao WHERE werks <> ls_planta_material-werks.
 
       IF lines( lt_origem_producao ) > 0.
 
         DATA(lt_prod) = lo_calc_producao_conv->get_std_producao_conversao(
-                                                            is_simulacao         = ms_simulacao
-                                                            it_origem            = lt_origem_producao
-                                                            is_material_centro   = ls_planta_material
-                                                            it_importado         = return-t_importado
-                                                            it_nacional          = return-t_nacional
-                                                            it_transf_importacao = return-t_transf_importacao
-                                                            it_transf_nacional   = return-t_transf_nacional ).
+          is_simulacao         = ms_simulacao
+          it_origem            = lt_origem_producao
+          is_material_centro   = ls_planta_material
+          it_importado         = return-t_importado
+          it_nacional          = return-t_nacional
+          it_transf_importacao = return-t_transf_importacao
+          it_transf_nacional   = return-t_transf_nacional ).
         APPEND LINES OF lt_prod TO return-t_producao_conversao.
 
         LOOP AT return-t_producao_conversao ASSIGNING FIELD-SYMBOL(<fs>).
@@ -1530,14 +1578,14 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
         ENDLOOP.
 
         "Transf
-        DATA(lt_origem_transf_std) = get_origens_transferencia( is_material = ls_planta_material
-                                                                is_simulacao         = ms_simulacao ).
+        DATA(lt_origem_transf_std) = get_origens_transferencia( is_material  = ls_planta_material
+                                                                is_simulacao = ms_simulacao ).
         IF lines( lt_prod ) > 0 AND lines( lt_origem_transf_std ) > 0.
 
           DATA(lt_trans_std) = lo_calc_transferencia->get_transferencias_std_prd( is_simulacao         = ms_simulacao
-                                                                          it_origem            = lt_origem_transf_std
-                                                                          it_origem_processada = lt_prod
-                                                                          is_material_centro   = ls_planta_material ).
+                                                                                  it_origem            = lt_origem_transf_std
+                                                                                  it_origem_processada = lt_prod
+                                                                                  is_material_centro   = ls_planta_material ).
           APPEND LINES OF lt_trans_std TO return-t_transf_std_producao.
         ENDIF.
 
@@ -1547,27 +1595,28 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
     ENDLOOP.
 
     "Std Produção - Produção
-*    BREAK c060863.
+*    BREAK abap.
     LOOP AT lt_planta_material INTO ls_planta_material.
 
-      lt_origem_producao = get_origens( is_material = ls_planta_material   iv_modalidade = 'P' ).
+      lt_origem_producao = get_origens( is_material = ls_planta_material iv_modalidade = 'P' ).
+      DELETE lt_origem_producao WHERE werks <> ls_planta_material-werks.
 
       IF lines( lt_origem_producao ) > 0.
 
         lt_prod = lo_calc_producao_prod->get_std_producao_producao(
-                                                            is_simulacao         = ms_simulacao
-                                                            it_origem            = lt_origem_producao
-                                                            is_material_centro   = ls_planta_material
-                                                            it_importado         = return-t_importado
-                                                            it_nacional          = return-t_nacional
-                                                            it_transf_importacao = return-t_transf_importacao
-                                                            it_transf_nacional   = return-t_transf_nacional
-                                                            it_transf_std_prd_conversao = return-t_producao_conversao ).
+          is_simulacao                = ms_simulacao
+          it_origem                   = lt_origem_producao
+          is_material_centro          = ls_planta_material
+          it_importado                = return-t_importado
+          it_nacional                 = return-t_nacional
+          it_transf_importacao        = return-t_transf_importacao
+          it_transf_nacional          = return-t_transf_nacional
+          it_transf_std_prd_conversao = return-t_producao_conversao ).
         APPEND LINES OF lt_prod TO return-t_producao_producao.
 
 *        "Transf
-        lt_origem_transf_std = get_origens_transferencia( is_material = ls_planta_material
-                                                          is_simulacao         = ms_simulacao ).
+        lt_origem_transf_std = get_origens_transferencia( is_material  = ls_planta_material
+                                                          is_simulacao = ms_simulacao ).
         IF lines( lt_prod ) > 0 AND lines( lt_origem_transf_std ) > 0.
 *          break c060863.
           lt_trans_std = lo_calc_transferencia->get_transferencias_std_prd( is_simulacao         = ms_simulacao
@@ -1596,8 +1645,6 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
     numbering_items( CHANGING cs_data = return ).
 
     compile_errors( CHANGING cs_data = return ).
-
-*    break c060863.
 
     lv_xml = /qaps/cl_serialization=>serialize( ir_data = REF #( return ) ).
 
@@ -1731,6 +1778,27 @@ CLASS /QAPS/CL_LISTA_CUSTO_GENERATOR IMPLEMENTATION.
         iv_content         = lv_xml
         iv_status          = 'A'
     ).
+
+  ENDMETHOD.
+
+
+  METHOD get_distribuicao_premissa.
+
+    SELECT *
+      FROM /qaps/prem_distr
+      WHERE id_distribuicao = @iv_id_distribuicao
+      INTO TABLE @return.
+
+  ENDMETHOD.
+
+
+  METHOD get_distribuicao_trajeto.
+
+    SELECT *
+      FROM /qaps/prem_traj
+      WHERE id_distribuicao = @iv_id_distribuicao
+      AND   id_trajeto      = @iv_id_trajeto
+      INTO TABLE @return.
 
   ENDMETHOD.
 ENDCLASS.

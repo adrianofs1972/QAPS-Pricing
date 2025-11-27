@@ -6,7 +6,7 @@
 define view /QAPS/CDS_MAT_PLANT as select from /qaps/v_prm_full {
     mandt,
     werks,
-    lpad(matnr, 18, '0') as MATNR
+    matnr
 }
 where tipo_regra = 'MA'
 and werks <> ''

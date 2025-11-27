@@ -48,6 +48,7 @@ FUNCTION /qaps/fm_lista_custo_input .
       es_data = CORRESPONDING #( gs_data ).
       es_data-status = 'G'.
       es_data-id_fonte = ls_fonte-id_fonte.
+      es_data-metodo_custeio = gs_data-metodo_custeio.
 
     WHEN 'CANCEL'.
       CLEAR: es_data.

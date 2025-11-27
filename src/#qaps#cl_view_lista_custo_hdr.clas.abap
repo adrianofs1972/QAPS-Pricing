@@ -51,7 +51,7 @@ CLASS /QAPS/CL_VIEW_LISTA_CUSTO_HDR IMPLEMENTATION.
                                            CHANGING  cr_data = lr_data ).
     ENDIF.
 
-    lv_line = '<html><body>'.
+    lv_line = '<html><body style="margin-top: 1px;margin-bottom: 0px">'.
     add_to_html lv_line.
 
     "container
@@ -91,6 +91,11 @@ CLASS /QAPS/CL_VIEW_LISTA_CUSTO_HDR IMPLEMENTATION.
     DATA(lv_moeda) = <fs>-moeda_calculo && ` / ` && <fs>-moeda_lista.
     lv_line = `<tr><td>Moeda (Local/Final):</td><td>` && lv_moeda && `</td></tr>`.
     add_to_html lv_line.
+
+    DATA(lv_metodo) = <fs>-metodo_custeio && ` - ` && <fs>-dsc_metodo_custeio.
+    lv_line = `<tr><td>Método Custeio:</td><td>` && lv_metodo && `</td></tr>`.
+    add_to_html lv_line.
+
 
     lv_line = '</table>'.
     add_to_html lv_line.

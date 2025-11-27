@@ -4,6 +4,8 @@
   <asx:values>
    <DDLS>
     <DDLNAME>/QAPS/CDS_PREM_TREE_DESTINO</DDLNAME>
+    <DDLANGUAGE>P</DDLANGUAGE>
+    <SOURCE_TYPE>V</SOURCE_TYPE>
    </DDLS>
   </asx:values>
  </asx:abap>

@@ -55,6 +55,13 @@ private section.
       !IV_PRODUCAO type CHAR1 default ''
     returning
       value(RETURN) type LVC_T_SCOL .
+  methods GET_LINE_PONDERACAO
+    importing
+      !IT_PONDERACAO type /QAPS/T_PONDERACAO
+      !IS_LISTA_CUSTO type /QAPS/S_RETORNO_CALCULO
+      !IV_PRODUCAO type ABAP_BOOL
+    returning
+      value(RETURN) type /QAPS/S_PONDERACAO .
   methods GET_ID_PONDERACAO
     importing
       !IT_PONDERACAO type /QAPS/T_PONDERACAO
@@ -535,6 +542,12 @@ CLASS /QAPS/CL_VIEW_ITEM_LISTA_CUSTO IMPLEMENTATION.
               int = 0
               inv = 0
           ).
+        WHEN 'P'. "Error
+          ls_scol-color = VALUE lvc_s_colo(
+              col = 5
+              int = 0
+              inv = 0
+          ).
         WHEN OTHERS.
           ls_scol-color = VALUE lvc_s_colo(
               col = 2
@@ -724,6 +737,8 @@ CLASS /QAPS/CL_VIEW_ITEM_LISTA_CUSTO IMPLEMENTATION.
           <fv_color> = lt_color_item.
         WHEN 'T'.
           <fv_color> = lt_color_prd.
+        when 'P'.
+          <fv_color> = lt_color_pnd.
         ENDCASE.
       ENDIF.
     END-OF-DEFINITION.
@@ -744,14 +759,11 @@ CLASS /QAPS/CL_VIEW_ITEM_LISTA_CUSTO IMPLEMENTATION.
     DATA lv_tipo TYPE /qaps/s_lista_custo-tipo.
     lv_tipo = 'Importação'.
 
-*    break c060863.
-    DATA(lt_ponderacao_full) = is_data-t_ponderacao.
-    DELETE lt_ponderacao_full WHERE items > 1 OR producao = 'X'.
-
     DATA(lt_color) = get_color_table( ms_data ).
     REFRESH lt_color.
     DATA(lt_color_item) = get_color_table( ir_data = ms_data iv_producao = 'I' ).
     DATA(lt_color_prd) = get_color_table( ir_data = ms_data iv_producao = 'T' ).
+    DATA(lt_color_pnd) = get_color_table( ir_data = ms_data iv_producao = 'P' ).
     DATA(lt_color_err) = get_color_table( ir_data = ms_data iv_producao = 'E' ).
 
     mv_has_error = abap_false.
@@ -817,7 +829,7 @@ CLASS /QAPS/CL_VIEW_ITEM_LISTA_CUSTO IMPLEMENTATION.
 
       ls_id_ponderacao = get_id_ponderacao( it_ponderacao  = is_data-t_ponderacao
                                             is_lista_custo = ls_data
-                                            iv_producao = '' ).
+                                            iv_producao    = '' ).
 
       ASSIGN COMPONENT 'ID_PONDERACAO' OF STRUCTURE <fs_line> TO <fv_id>.
       IF <fv_id> IS ASSIGNED.
@@ -849,6 +861,53 @@ CLASS /QAPS/CL_VIEW_ITEM_LISTA_CUSTO IMPLEMENTATION.
       ENDLOOP.
 
       INSERT <fs_line> INTO TABLE <ft>.
+    ENDLOOP.
+
+*    BREAK abap.
+    DATA(lt_ponderacao) = is_data-t_ponderacao.
+    DELETE lt_ponderacao WHERE items = 1 OR producao = 'X'.
+
+    LOOP AT lt_ponderacao INTO DATA(ls_ponderacao).
+
+      ls_ponderacao-matnr = |{ ls_ponderacao-matnr ALPHA = IN WIDTH = 18 }|.
+*      ls_ponderacao-material = |{ ls_ponderacao-material ALPHA = IN WIDTH = 18 }|.
+
+      <fs_line> = CORRESPONDING #( ls_ponderacao ).
+
+      ASSIGN COMPONENT 'ID_PONDERACAO' OF STRUCTURE <fs_line> TO <fv_id>.
+      IF <fv_id> IS ASSIGNED.
+        <fv_id> = ls_ponderacao-id_ponderacao." ls_id_ponderacao-id_ponderacao.
+      ENDIF.
+
+*      ASSIGN COMPONENT 'TIPO' OF STRUCTURE <fs_line> TO <fv_tipo>.
+*      IF <fv_tipo> IS ASSIGNED.
+*        <fv_tipo> = 'Nacional'.
+*      ENDIF.
+*
+*      IF lines( ls_data-t_erros ) > 0.
+*        mv_has_error = abap_true.
+*        ASSIGN COMPONENT 'HAS_ERROR' OF STRUCTURE <fs_line> TO <fv_has_error>.
+*        IF <fv_tipo> IS ASSIGNED.
+*          <fv_has_error> = 'X'.
+*        ENDIF.
+*      ENDIF.
+
+      lt_valores = ls_ponderacao-t_expressao[ fieldname = lv_valor ]-t_valores.
+
+      LOOP AT lt_valores INTO ls_valores.
+        ls_fcat = it_fcat[ parameter1 = ls_valores-periodo ].
+        ASSIGN COMPONENT ls_fcat-fieldname OF STRUCTURE <fs_line> TO <fv_value>.
+        CHECK sy-subrc EQ 0.
+        ASSIGN COMPONENT lv_moeda OF STRUCTURE ls_valores TO <fv_src>.
+        CHECK sy-subrc EQ 0.
+        <fv_value> = <fv_src>.
+      ENDLOOP.
+
+      set_ponderado ''.
+      set_color 'P'.
+
+      INSERT <fs_line> INTO TABLE <ft>.
+
     ENDLOOP.
 
     "Produção - Conversão
@@ -1186,8 +1245,8 @@ CLASS /QAPS/CL_VIEW_ITEM_LISTA_CUSTO IMPLEMENTATION.
       INSERT <fs_line> INTO TABLE <ft>.
     ENDLOOP.
 
-    fill_material_data( CHANGING ct_data = <ft>  ).
-    fill_porto_cais_data( CHANGING ct_data = <ft>  ).
+    fill_material_data( CHANGING ct_data = <ft> ).
+    fill_porto_cais_data( CHANGING ct_data = <ft> ).
 
   ENDMETHOD.
 
@@ -1394,6 +1453,40 @@ CLASS /QAPS/CL_VIEW_ITEM_LISTA_CUSTO IMPLEMENTATION.
 *    mo_alv->set_frontend_fieldcatalog( lt_fcat ).
     mo_alv->set_scroll_info_via_id( EXPORTING is_row_info = ls_row
                                               is_col_info = ls_col ).
+
+  ENDMETHOD.
+
+
+  METHOD GET_LINE_PONDERACAO.
+
+    DATA lv_producao TYPE abap_bool.
+    data lv_matnr type matnr.
+
+    if iv_producao = ''.
+      lv_matnr  = |{ is_lista_custo-matnr ALPHA = in WIDTH = 18 }|.
+    else.
+      lv_matnr  = |{ is_lista_custo-std_prd_pa ALPHA = in WIDTH = 18 }|.
+    endif.
+
+    lv_producao = iv_producao.
+
+    return = VALUE #( it_ponderacao[ cod_grp_planta = is_lista_custo-cod_grp_planta
+                                     werks          = is_lista_custo-werks
+                                     matnr          = lv_matnr
+                                     producao       = lv_producao ] OPTIONAL ).
+
+    IF return IS INITIAL AND lv_producao = abap_false.
+      lv_producao = abap_true.
+    ELSEIF return IS INITIAL AND lv_producao = abap_true.
+      lv_producao = abap_false.
+    ELSE.
+      RETURN.
+    ENDIF.
+
+    return = VALUE #( it_ponderacao[ cod_grp_planta = is_lista_custo-cod_grp_planta
+                            werks          = is_lista_custo-werks
+                            matnr          = lv_matnr
+                            producao       = lv_producao ] OPTIONAL ).
 
   ENDMETHOD.
 ENDCLASS.

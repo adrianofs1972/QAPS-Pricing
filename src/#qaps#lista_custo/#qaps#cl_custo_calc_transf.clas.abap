@@ -103,7 +103,7 @@ CLASS /QAPS/CL_CUSTO_CALC_TRANSF IMPLEMENTATION.
   METHOD get_transferencias.
 
     DATA: lv_times   TYPE sy-index,
-          ls_trajeto TYPE /qaps/dist_traj. "/qaps/s_v_prm_trj.
+          ls_trajeto TYPE /qaps/s_dist_traj. "/qaps/s_v_prm_trj.
 
     ms_simulacao = is_simulacao.
 
@@ -186,10 +186,10 @@ CLASS /QAPS/CL_CUSTO_CALC_TRANSF IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method GET_TRANSFERENCIAS_STD_PRD.
+  METHOD get_transferencias_std_prd.
 
     DATA: lv_times   TYPE sy-index,
-          ls_trajeto TYPE /qaps/dist_traj. "/qaps/s_v_prm_trj.
+          ls_trajeto TYPE /qaps/s_dist_traj. "/qaps/s_v_prm_trj.
 
     ms_simulacao = is_simulacao.
 
@@ -235,8 +235,8 @@ CLASS /QAPS/CL_CUSTO_CALC_TRANSF IMPLEMENTATION.
 
           "Carregar variáveis elementares
           fill_variaveis_elementares( is_material_centro = is_material_centro
-                                      is_origem = ls_origem
-                                      is_trajeto = ls_trajeto ).
+                                      is_origem          = ls_origem
+                                      is_trajeto         = ls_trajeto ).
 
           "Resolver expressão
           solve_expressao( ).
@@ -272,13 +272,13 @@ CLASS /QAPS/CL_CUSTO_CALC_TRANSF IMPLEMENTATION.
 
 
 
-  endmethod.
+  ENDMETHOD.
 
 
-  METHOD GET_TRANSFERENCIAS_STD_PRD_2.
+  METHOD get_transferencias_std_prd_2.
 
     DATA: lv_times   TYPE sy-index,
-          ls_trajeto TYPE /qaps/dist_traj. "/qaps/s_v_prm_trj.
+          ls_trajeto TYPE /qaps/s_dist_traj. "/qaps/s_v_prm_trj.
 
     ms_simulacao = is_simulacao.
 
@@ -288,11 +288,9 @@ CLASS /QAPS/CL_CUSTO_CALC_TRANSF IMPLEMENTATION.
       WHERE id_ponto = @it_origem-id_origem
       INTO TABLE @DATA(lt_ponto).
 
-    BREAK c060863.
+    BREAK abap.
 
     LOOP AT it_origem INTO DATA(ls_origem).
-
-*      CHECK ls_origem-std_prd_total = abap_true.
 
       DATA(ls_ponto) = lt_ponto[ id_ponto = ls_origem-id_origem ].
 
@@ -326,8 +324,8 @@ CLASS /QAPS/CL_CUSTO_CALC_TRANSF IMPLEMENTATION.
 
           "Carregar variáveis elementares
           fill_variaveis_elementares( is_material_centro = is_material_centro
-                                      is_origem = ls_origem
-                                      is_trajeto = ls_trajeto ).
+                                      is_origem          = ls_origem
+                                      is_trajeto         = ls_trajeto ).
 
           "Resolver expressão
           solve_expressao( ).
@@ -339,6 +337,8 @@ CLASS /QAPS/CL_CUSTO_CALC_TRANSF IMPLEMENTATION.
 *          <fs_return>-cod_origem = ls_origem-cod_origem.
           <fs_return>-cod_trajeto = ls_trajeto-cod_trajeto.
           <fs_return>-desc_trajeto = ls_trajeto-descricao.
+          <fs_return>-t_dist_premissa = ls_origem-t_dist_premissa.
+          <fs_return>-trajeto      = ls_trajeto.
 
           CASE <fs_return>-tipo_origem.
             WHEN 'F'.

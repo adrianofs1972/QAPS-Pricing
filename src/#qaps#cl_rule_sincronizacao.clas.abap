@@ -758,7 +758,7 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
     IF line_exists( lt_custo_premissa[ id_grp_planta = is_destino-id_grp_planta
                                        id_centro     = is_destino-id_centro ] )
        OR line_exists( lt_prm_full[ id_grp_planta = is_destino-id_grp_planta
-                                       id_centro     = is_destino-id_centro ] ).
+                                       id_centro  = is_destino-id_centro ] ).
       return-destino = 'X'.
     ELSEIF   line_exists( lt_custo_geral[ id_grp_planta = is_destino-id_grp_planta
                                           id_centro     = is_destino-id_centro ] )
@@ -873,8 +873,10 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
 
     DATA lt_item TYPE /qaps/t_relation_std_prd_item.
     DATA ls_item TYPE /qaps/s_relation_std_prd_item.
-    DATA: lr_matnr         TYPE RANGE OF matnr,
-          lr_id_grp_planta TYPE RANGE OF /qaps/std_prd_pa-id_grp_planta.
+    DATA: lr_matnr_out     TYPE RANGE OF matnr,
+          lr_matnr_in      TYPE RANGE OF matnr,
+          lr_id_grp_planta TYPE RANGE OF /qaps/std_prd_pa-id_grp_planta,
+          lr_werks         TYPE RANGE OF /qaps/std_prd_pa-werks.
 
     SELECT *
       FROM /qaps/centro
@@ -893,12 +895,26 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
     IF lines( lt_std_prd_destino ) > 0.
 
       lr_id_grp_planta = VALUE #( FOR wa_grp_planta IN lt_std_prd_destino
+                                  WHERE ( id_grp_planta <> mc_guid_null )
                                   ( sign = 'I' option = 'EQ' low = wa_grp_planta-id_grp_planta ) ).
 
-      SELECT *
-        FROM /qaps/v_centro
-        WHERE id_grp_planta IN @lr_id_grp_planta
-        INTO TABLE @DATA(lt_children).
+      lr_werks = VALUE #( FOR wa_grp_planta IN lt_std_prd_destino
+                          WHERE ( werks <> '' )
+                          ( sign = 'I' option = 'EQ' low = wa_grp_planta-werks ) ).
+
+      IF lines( lr_id_grp_planta ) > 0.
+        SELECT *
+          FROM /qaps/v_centro
+          WHERE id_grp_planta IN @lr_id_grp_planta
+          INTO TABLE @DATA(lt_children).
+      ENDIF.
+
+      IF lines( lr_werks ) > 0.
+        SELECT *
+          FROM /qaps/v_centro
+          WHERE werks IN @lr_werks
+          APPENDING TABLE @lt_children.
+      ENDIF.
 
     ENDIF.
 
@@ -906,6 +922,11 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
       FROM /qaps/v_ponto
       WHERE tipo_ponto = 'G'
       INTO TABLE @DATA(lt_grp_planta).
+
+    SELECT *
+      FROM /qaps/v_ponto
+      WHERE tipo_ponto = 'W'
+      INTO TABLE @DATA(lt_werks).
 
     "Destino
     LOOP AT lt_std_prd_destino INTO DATA(ls_std_producao).
@@ -948,17 +969,35 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
     ENDLOOP.
 
     "Material
-    SELECT /qaps/std_prd_pa~id_grp_planta,grp_planta~codigo, id_centro,centro~werks,matnr
-      FROM /qaps/std_prd_pa
-      LEFT OUTER JOIN /qaps/grp_planta AS grp_planta
-      ON /qaps/std_prd_pa~id_grp_planta = grp_planta~id_grp_planta
-      LEFT OUTER JOIN /qaps/centro AS centro
-      ON /qaps/std_prd_pa~werks = centro~werks
-      WHERE /qaps/std_prd_pa~id_grp_planta IN @lr_id_grp_planta
-      INTO TABLE @DATA(lt_material).
+    IF lines( lr_id_grp_planta ) > 0.
+      SELECT /qaps/std_prd_pa~id_grp_planta,grp_planta~codigo, id_centro,centro~werks,matnr
+        FROM /qaps/std_prd_pa
+        LEFT OUTER JOIN /qaps/grp_planta AS grp_planta
+        ON /qaps/std_prd_pa~id_grp_planta = grp_planta~id_grp_planta
+        LEFT OUTER JOIN /qaps/centro AS centro
+        ON /qaps/std_prd_pa~werks = centro~werks
+        WHERE /qaps/std_prd_pa~id_grp_planta IN @lr_id_grp_planta
+        INTO TABLE @DATA(lt_material).
+    ENDIF.
 
-    lr_matnr = VALUE #( FOR wa IN lt_material
-                        ( sign = 'I' option = 'EQ' low = |{ wa-matnr ALPHA = OUT }| ) ).
+    IF lines( lr_werks ) > 0.
+      SELECT /qaps/std_prd_pa~id_grp_planta,grp_planta~codigo, id_centro,centro~werks,matnr
+        FROM /qaps/std_prd_pa
+        LEFT OUTER JOIN /qaps/grp_planta AS grp_planta
+        ON /qaps/std_prd_pa~id_grp_planta = grp_planta~id_grp_planta
+        LEFT OUTER JOIN /qaps/centro AS centro
+        ON /qaps/std_prd_pa~werks = centro~werks
+        WHERE /qaps/std_prd_pa~werks IN @lr_werks
+        APPENDING TABLE @lt_material.
+    ENDIF.
+
+    lr_matnr_out = VALUE #( FOR wa IN lt_material
+                        ( sign = 'I' option = 'EQ'
+                          low = |{ wa-matnr ALPHA = out  }| ) ).
+
+    lr_matnr_in = VALUE #( FOR wa IN lt_material
+                        ( sign = 'I' option = 'EQ'
+                          low = |{ wa-matnr ALPHA = in WIDTH = 18 }| ) ).
 
     "Dados existentes na premissa
     SELECT DISTINCT id_simulacao,id_premissa,id_grp_planta,id_centro,id_item,matnr
@@ -966,7 +1005,7 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
         WHERE id_simulacao = @is_data-id_simulacao
         AND   id_grp_planta IN @lr_id_grp_planta
         AND   tipo_regra = 'MA'
-        AND   matnr    IN @lr_matnr
+        AND   ( matnr    IN @lr_matnr_out or matnr    IN @lr_matnr_in )
         INTO TABLE @DATA(lt_destino_item).
 
     LOOP AT lt_destino_item ASSIGNING FIELD-SYMBOL(<fs>).
@@ -1024,6 +1063,23 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
         ls_destino_item = VALUE #( lt_destino_item[ id_grp_planta = ls_material-id_grp_planta
                                                     id_centro     = ls_children-id_centro
                                                     matnr      = ls_material-matnr ] OPTIONAL ).
+
+        ls_item-id_premissa = ls_destino_item-id_premissa.
+        ls_item-id_item = ls_destino_item-id_item.
+        APPEND ls_item TO lt_item.
+
+      ELSEIF ls_material-codigo = '' AND ls_material-werks <> ''.
+
+        ls_item = VALUE /qaps/s_relation_std_prd_item( tipo_regra = 'MA'
+                                                       matnr      = ls_material-matnr
+*                                                       id_grp_planta = ls_material-id_grp_planta
+                                                       id_centro     = ls_material-id_centro
+                                                       werks         = ls_material-werks ).
+
+        ls_destino_item = VALUE #( lt_destino_item[
+*                                                    id_grp_planta = ls_material-id_grp_planta
+                                                    id_centro     = ls_material-id_centro
+                                                    matnr         = ls_material-matnr ] OPTIONAL ).
 
         ls_item-id_premissa = ls_destino_item-id_premissa.
         ls_item-id_item = ls_destino_item-id_item.
@@ -2483,142 +2539,279 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
 
     LOOP AT lt_destino INTO DATA(ls_destino).
 
-      LOOP AT lt_material INTO DATA(ls_material)
-          WHERE cod_grp_planta = ls_destino-cod_grp_planta
-          AND   werks          = ls_destino-werks.
+      CASE ls_destino-tipo_origem.
 
-        IF ls_destino-werks = mc_guid_null OR ls_destino-werks IS INITIAL.
+        WHEN 'G'.
 
-          CHECK line_exists( lt_std_prd[ cod_grp_planta = ls_destino-cod_grp_planta
-                                         werks          = ''
-                                         matnr          = ls_material-matnr ] ).
+          LOOP AT lt_material INTO DATA(ls_material)
+              WHERE cod_grp_planta = ls_destino-cod_grp_planta
+              AND   werks          = ls_destino-werks.
 
-          IF line_exists( lt_prm_full[ id_premissa = ls_destino-id_premissa
-                                       id_grp_planta = ls_destino-id_grp_planta
-                                       id_centro     = mc_guid_null
-                                       matnr       = ls_material-matnr ] ).
+            IF ls_destino-werks = mc_guid_null OR ls_destino-werks IS INITIAL.
 
-            DATA(ls_item) = lt_prm_full[ id_premissa = ls_destino-id_premissa
-                                         id_grp_planta = ls_destino-id_grp_planta
-                                         id_centro     = mc_guid_null
-                                         matnr       = ls_material-matnr ].
+              CHECK line_exists( lt_std_prd[ cod_grp_planta = ls_destino-cod_grp_planta
+                                             werks          = ''
+                                             matnr          = ls_material-matnr ] ).
 
-            APPEND VALUE /qaps/s_relation_std_prd_item(
-                id_premissa     = ls_destino-id_premissa
-                id_grp_planta   = ls_destino-id_grp_planta
-                cod_grp_planta  = ls_destino-cod_grp_planta
-                id_centro       = ls_destino-id_centro
-                werks           = ls_destino-werks
-                tipo_regra      = 'MA'
-                matnr           = ls_material-matnr
-                id_item         = ls_item-id_item
-                tipo_origem     = ls_destino-tipo_origem
-                id_origem       = COND #( WHEN ls_destino-tipo_origem = 'G'
-                                       THEN ls_destino-id_grp_planta
-                                       ELSE ls_destino-id_centro ) ) TO return.
+              IF line_exists( lt_prm_full[ id_premissa = ls_destino-id_premissa
+                                           id_grp_planta = ls_destino-id_grp_planta
+                                           id_centro     = mc_guid_null
+                                           matnr       = ls_material-matnr ] ).
 
-            UPDATE /qaps/prem_item
-            SET std_prd = 'X'
-                oculto  = ''
-            WHERE id_item = ls_item-id_item.
+                DATA(ls_item) = lt_prm_full[ id_premissa = ls_destino-id_premissa
+                                             id_grp_planta = ls_destino-id_grp_planta
+                                             id_centro     = mc_guid_null
+                                             matnr       = ls_material-matnr ].
 
-          ELSE.
+                APPEND VALUE /qaps/s_relation_std_prd_item(
+                    id_premissa     = ls_destino-id_premissa
+                    id_grp_planta   = ls_destino-id_grp_planta
+                    cod_grp_planta  = ls_destino-cod_grp_planta
+                    id_centro       = ls_destino-id_centro
+                    werks           = ls_destino-werks
+                    tipo_regra      = 'MA'
+                    matnr           = ls_material-matnr
+                    id_item         = ls_item-id_item
+                    tipo_origem     = ls_destino-tipo_origem
+                    id_origem       = COND #( WHEN ls_destino-tipo_origem = 'G'
+                                           THEN ls_destino-id_grp_planta
+                                           ELSE ls_destino-id_centro ) ) TO return.
 
-            DATA(ls_entry) = VALUE /qaps/prem_item(
-                id_item          = cl_system_uuid=>create_uuid_x16_static( )
-                id_premissa      = ls_destino-id_premissa
-                tipo_regra       = 'MA'
-                std_prd          = 'X'
-                matnr            = /qaps/cl_helper_data=>material_to_input( ls_material-matnr  ) ).
+                UPDATE /qaps/prem_item
+                SET std_prd = 'X'
+                    oculto  = ''
+                WHERE id_item = ls_item-id_item.
 
-            lr_data = REF #( ls_entry ).
-            preencher_dados_controle( CHANGING cr_data = lr_data ).
-            APPEND ls_entry TO lt_entry.
+              ELSE.
 
-            APPEND VALUE /qaps/s_relation_std_prd_item(
-                id_premissa = ls_destino-id_premissa
-                id_grp_planta   = ls_destino-id_grp_planta
-                cod_grp_planta  = ls_destino-cod_grp_planta
-                id_centro       = ls_destino-id_centro
-                werks           = ls_destino-werks
-                tipo_regra  = 'MA'
-                matnr       = /qaps/cl_helper_data=>material_to_input( ls_material-matnr )
-                id_item     = ls_entry-id_item
-                tipo_origem = ls_destino-tipo_origem
-                id_origem   = COND #( WHEN ls_destino-tipo_origem = 'G'
-                                       THEN ls_destino-id_grp_planta
-                                       ELSE ls_destino-id_centro ) ) TO return.
+                DATA(ls_entry) = VALUE /qaps/prem_item(
+                    id_item          = cl_system_uuid=>create_uuid_x16_static( )
+                    id_premissa      = ls_destino-id_premissa
+                    tipo_regra       = 'MA'
+                    std_prd          = 'X'
+                    matnr            = /qaps/cl_helper_data=>material_to_input( ls_material-matnr  ) ).
 
-          ENDIF.
+                lr_data = REF #( ls_entry ).
+                preencher_dados_controle( CHANGING cr_data = lr_data ).
+                APPEND ls_entry TO lt_entry.
 
-        ELSE.
+                APPEND VALUE /qaps/s_relation_std_prd_item(
+                    id_premissa = ls_destino-id_premissa
+                    id_grp_planta   = ls_destino-id_grp_planta
+                    cod_grp_planta  = ls_destino-cod_grp_planta
+                    id_centro       = ls_destino-id_centro
+                    werks           = ls_destino-werks
+                    tipo_regra  = 'MA'
+                    matnr       = /qaps/cl_helper_data=>material_to_input( ls_material-matnr )
+                    id_item     = ls_entry-id_item
+                    tipo_origem = ls_destino-tipo_origem
+                    id_origem   = COND #( WHEN ls_destino-tipo_origem = 'G'
+                                           THEN ls_destino-id_grp_planta
+                                           ELSE ls_destino-id_centro ) ) TO return.
 
-          CHECK line_exists( lt_std_prd[ cod_grp_planta = ls_destino-cod_grp_planta
-                                         matnr          = ls_material-matnr ] )
-             OR line_exists( lt_std_prd[ werks          = ls_destino-werks
-                                         matnr          = ls_material-matnr ] ).
+              ENDIF.
 
-          IF line_exists( lt_prm_full[ id_premissa = ls_destino-id_premissa
+            ELSE.
+
+              CHECK line_exists( lt_std_prd[ cod_grp_planta = ls_destino-cod_grp_planta
+                                             matnr          = ls_material-matnr ] )
+                 OR line_exists( lt_std_prd[ werks          = ls_destino-werks
+                                             matnr          = ls_material-matnr ] ).
+
+              IF line_exists( lt_prm_full[ id_premissa = ls_destino-id_premissa
+                                           id_grp_planta = ls_destino-id_grp_planta
+                                           id_centro     = ls_destino-id_centro
+                                           matnr       = ls_material-matnr ] ).
+
+                ls_item = lt_prm_full[ id_premissa = ls_destino-id_premissa
                                        id_grp_planta = ls_destino-id_grp_planta
                                        id_centro     = ls_destino-id_centro
-                                       matnr       = ls_material-matnr ] ).
+                                       matnr       = ls_material-matnr ].
 
-            ls_item = lt_prm_full[ id_premissa = ls_destino-id_premissa
-                                   id_grp_planta = ls_destino-id_grp_planta
-                                   id_centro     = ls_destino-id_centro
-                                   matnr       = ls_material-matnr ].
+                APPEND VALUE /qaps/s_relation_std_prd_item(
+                    id_premissa     = ls_destino-id_premissa
+                    id_grp_planta   = ls_destino-id_grp_planta
+                    cod_grp_planta  = ls_destino-cod_grp_planta
+                    id_centro       = ls_destino-id_centro
+                    werks           = ls_destino-werks
+                    tipo_regra      = 'MA'
+                    matnr           = /qaps/cl_helper_data=>material_to_input( ls_material-matnr )
+                    id_item         = ls_item-id_item
+                    tipo_origem     = ls_destino-tipo_origem
+                    id_origem       = COND #( WHEN ls_destino-tipo_origem = 'G'
+                                           THEN ls_destino-id_grp_planta
+                                           ELSE ls_destino-id_centro ) ) TO return.
 
-            APPEND VALUE /qaps/s_relation_std_prd_item(
-                id_premissa     = ls_destino-id_premissa
-                id_grp_planta   = ls_destino-id_grp_planta
-                cod_grp_planta  = ls_destino-cod_grp_planta
-                id_centro       = ls_destino-id_centro
-                werks           = ls_destino-werks
-                tipo_regra      = 'MA'
-                matnr           = /qaps/cl_helper_data=>material_to_input( ls_material-matnr )
-                id_item         = ls_item-id_item
-                tipo_origem     = ls_destino-tipo_origem
-                id_origem       = COND #( WHEN ls_destino-tipo_origem = 'G'
-                                       THEN ls_destino-id_grp_planta
-                                       ELSE ls_destino-id_centro ) ) TO return.
+                UPDATE /qaps/prem_item
+                SET std_prd = 'X'
+                    oculto  = ''
+                WHERE id_item = ls_item-id_item.
 
-            UPDATE /qaps/prem_item
-            SET std_prd = 'X'
-                oculto  = ''
-            WHERE id_item = ls_item-id_item.
+              ELSE.
 
-          ELSE.
+                ls_entry = VALUE /qaps/prem_item(
+                    id_item          = cl_system_uuid=>create_uuid_x16_static( )
+                    id_premissa      = ls_destino-id_premissa
+                    tipo_regra       = 'MA'
+                    std_prd          = 'X'
+                    matnr            = /qaps/cl_helper_data=>material_to_input( ls_material-matnr  ) ).
 
-            ls_entry = VALUE /qaps/prem_item(
-                id_item          = cl_system_uuid=>create_uuid_x16_static( )
-                id_premissa      = ls_destino-id_premissa
-                tipo_regra       = 'MA'
-                std_prd          = 'X'
-                matnr            = /qaps/cl_helper_data=>material_to_input( ls_material-matnr  ) ).
+                lr_data = REF #( ls_entry ).
+                preencher_dados_controle( CHANGING cr_data = lr_data ).
+                APPEND ls_entry TO lt_entry.
 
-            lr_data = REF #( ls_entry ).
-            preencher_dados_controle( CHANGING cr_data = lr_data ).
-            APPEND ls_entry TO lt_entry.
+                APPEND VALUE /qaps/s_relation_std_prd_item(
+                    id_premissa = ls_destino-id_premissa
+                    id_grp_planta   = ls_destino-id_grp_planta
+                    cod_grp_planta  = ls_destino-cod_grp_planta
+                    id_centro       = ls_destino-id_centro
+                    werks           = ls_destino-werks
+                    tipo_regra  = 'MA'
+                    matnr       = /qaps/cl_helper_data=>material_to_input( ls_material-matnr )
+                    id_item     = ls_entry-id_item
+                    tipo_origem = ls_destino-tipo_origem
+                    id_origem   = COND #( WHEN ls_destino-tipo_origem = 'G'
+                                           THEN ls_destino-id_grp_planta
+                                           ELSE ls_destino-id_centro ) ) TO return.
 
-            APPEND VALUE /qaps/s_relation_std_prd_item(
-                id_premissa = ls_destino-id_premissa
-                id_grp_planta   = ls_destino-id_grp_planta
-                cod_grp_planta  = ls_destino-cod_grp_planta
-                id_centro       = ls_destino-id_centro
-                werks           = ls_destino-werks
-                tipo_regra  = 'MA'
-                matnr       = /qaps/cl_helper_data=>material_to_input( ls_material-matnr )
-                id_item     = ls_entry-id_item
-                tipo_origem = ls_destino-tipo_origem
-                id_origem   = COND #( WHEN ls_destino-tipo_origem = 'G'
-                                       THEN ls_destino-id_grp_planta
-                                       ELSE ls_destino-id_centro ) ) TO return.
+              ENDIF.
 
-          ENDIF.
+            ENDIF.
 
-        ENDIF.
+          ENDLOOP.
 
-      ENDLOOP.
+        WHEN 'W'.
+
+          LOOP AT lt_material INTO ls_material
+              WHERE werks          = ls_destino-werks.
+
+*            IF ls_destino-werks = mc_guid_null OR ls_destino-werks IS INITIAL.
+*
+*              CHECK line_exists( lt_std_prd[ cod_grp_planta = ls_destino-cod_grp_planta
+*                                             werks          = ''
+*                                             matnr          = ls_material-matnr ] ).
+*
+*              IF line_exists( lt_prm_full[ id_premissa = ls_destino-id_premissa
+*                                           id_grp_planta = ls_destino-id_grp_planta
+*                                           id_centro     = mc_guid_null
+*                                           matnr       = ls_material-matnr ] ).
+*
+*                DATA(ls_item) = lt_prm_full[ id_premissa = ls_destino-id_premissa
+*                                             id_grp_planta = ls_destino-id_grp_planta
+*                                             id_centro     = mc_guid_null
+*                                             matnr       = ls_material-matnr ].
+*
+*                APPEND VALUE /qaps/s_relation_std_prd_item(
+*                    id_premissa     = ls_destino-id_premissa
+*                    id_grp_planta   = ls_destino-id_grp_planta
+*                    cod_grp_planta  = ls_destino-cod_grp_planta
+*                    id_centro       = ls_destino-id_centro
+*                    werks           = ls_destino-werks
+*                    tipo_regra      = 'MA'
+*                    matnr           = ls_material-matnr
+*                    id_item         = ls_item-id_item
+*                    tipo_origem     = ls_destino-tipo_origem
+*                    id_origem       = COND #( WHEN ls_destino-tipo_origem = 'G'
+*                                           THEN ls_destino-id_grp_planta
+*                                           ELSE ls_destino-id_centro ) ) TO return.
+*
+*                UPDATE /qaps/prem_item
+*                SET std_prd = 'X'
+*                    oculto  = ''
+*                WHERE id_item = ls_item-id_item.
+*
+*              ELSE.
+*
+*                DATA(ls_entry) = VALUE /qaps/prem_item(
+*                    id_item          = cl_system_uuid=>create_uuid_x16_static( )
+*                    id_premissa      = ls_destino-id_premissa
+*                    tipo_regra       = 'MA'
+*                    std_prd          = 'X'
+*                    matnr            = /qaps/cl_helper_data=>material_to_input( ls_material-matnr  ) ).
+*
+*                lr_data = REF #( ls_entry ).
+*                preencher_dados_controle( CHANGING cr_data = lr_data ).
+*                APPEND ls_entry TO lt_entry.
+*
+*                APPEND VALUE /qaps/s_relation_std_prd_item(
+*                    id_premissa = ls_destino-id_premissa
+*                    id_grp_planta   = ls_destino-id_grp_planta
+*                    cod_grp_planta  = ls_destino-cod_grp_planta
+*                    id_centro       = ls_destino-id_centro
+*                    werks           = ls_destino-werks
+*                    tipo_regra  = 'MA'
+*                    matnr       = /qaps/cl_helper_data=>material_to_input( ls_material-matnr )
+*                    id_item     = ls_entry-id_item
+*                    tipo_origem = ls_destino-tipo_origem
+*                    id_origem   = COND #( WHEN ls_destino-tipo_origem = 'G'
+*                                           THEN ls_destino-id_grp_planta
+*                                           ELSE ls_destino-id_centro ) ) TO return.
+*
+*              ENDIF.
+*
+*            ELSE.
+
+              CHECK line_exists( lt_std_prd[ werks          = ls_destino-werks
+                                             matnr          = ls_material-matnr ] ).
+
+              IF line_exists( lt_prm_full[ id_premissa = ls_destino-id_premissa
+                                           id_centro     = ls_destino-id_centro
+                                           matnr       = ls_material-matnr ] ).
+
+                ls_item = lt_prm_full[ id_premissa = ls_destino-id_premissa
+                                       id_centro     = ls_destino-id_centro
+                                       matnr       = ls_material-matnr ].
+
+                APPEND VALUE /qaps/s_relation_std_prd_item(
+                    id_premissa     = ls_destino-id_premissa
+                    id_centro       = ls_destino-id_centro
+                    werks           = ls_destino-werks
+                    tipo_regra      = 'MA'
+                    matnr           = /qaps/cl_helper_data=>material_to_input( ls_material-matnr )
+                    id_item         = ls_item-id_item
+                    tipo_origem     = ls_destino-tipo_origem
+                    id_origem       = COND #( WHEN ls_destino-tipo_origem = 'G'
+                                           THEN ls_destino-id_grp_planta
+                                           ELSE ls_destino-id_centro ) ) TO return.
+
+                UPDATE /qaps/prem_item
+                SET std_prd = 'X'
+                    oculto  = ''
+                WHERE id_item = ls_item-id_item.
+
+              ELSE.
+
+                ls_entry = VALUE /qaps/prem_item(
+                    id_item          = cl_system_uuid=>create_uuid_x16_static( )
+                    id_premissa      = ls_destino-id_premissa
+                    tipo_regra       = 'MA'
+                    std_prd          = 'X'
+                    matnr            = /qaps/cl_helper_data=>material_to_input( ls_material-matnr  ) ).
+
+                lr_data = REF #( ls_entry ).
+                preencher_dados_controle( CHANGING cr_data = lr_data ).
+                APPEND ls_entry TO lt_entry.
+
+                APPEND VALUE /qaps/s_relation_std_prd_item(
+                    id_premissa = ls_destino-id_premissa
+                    id_centro       = ls_destino-id_centro
+                    werks           = ls_destino-werks
+                    tipo_regra  = 'MA'
+                    matnr       = /qaps/cl_helper_data=>material_to_input( ls_material-matnr )
+                    id_item     = ls_entry-id_item
+                    tipo_origem = ls_destino-tipo_origem
+                    id_origem   = COND #( WHEN ls_destino-tipo_origem = 'G'
+                                           THEN ls_destino-id_grp_planta
+                                           ELSE ls_destino-id_centro ) ) TO return.
+
+              ENDIF.
+
+*            ENDIF.
+
+          ENDLOOP.
+
+      ENDCASE.
+
     ENDLOOP.
 
 
@@ -2768,11 +2961,9 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
   METHOD create_std_producao.
 
     CHECK NOT ms_simulacao-id_std_producao IS INITIAL.
-
+    break abap.
     DATA(ls_relation) = check_relation_std_prd( iv_id_tp_lista = ms_simulacao-id_tp_lista
                                                 is_data        = ms_simulacao ).
-
-
 
     check_relation( changing cs_data = ls_relation ).
 
@@ -3400,6 +3591,7 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
 
   METHOD get_distribuicao_logistica.
 
+*    BREAK abap.
     SELECT SINGLE *
       FROM /qaps/v_ponto
       WHERE id_ponto = @is_data-id_origem
@@ -3415,7 +3607,7 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
 
         IF NOT ls_destino IS INITIAL.
 
-          SELECT *
+          SELECT DISTINCT id_grp_planta,id_centro,werks,id_porto,cod_porto,porto,ativo
             FROM /qaps/v_dst_log
             WHERE ativo = 'X'
             AND id_porto = @ls_origem-id_externo
@@ -3424,7 +3616,7 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
 
         ELSE.
 
-          SELECT *
+          SELECT DISTINCT id_grp_planta,id_centro,werks,id_porto,cod_porto,porto,ativo
             FROM /qaps/v_dst_log"/qaps/v_dist_log
             WHERE ativo = 'X'
             AND id_porto = @ls_origem-id_externo
@@ -3834,7 +4026,7 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
     END-OF-DEFINITION.
 
     DATA(ls_data) = is_data.
-
+*    break abap.
     CASE ls_item-tipo_regra.
       WHEN 'MA'.
         DATA(lt_material) = mo_material->get_materiais_by_material( ls_item-matnr  ).
@@ -3846,6 +4038,8 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
             ELSEIF ls_heranca-tipo_regra = 'MP' AND ls_heranca-mat_planejado = ls_material-mat_planejado.
               set_value_and_return ls_heranca.
             ELSEIF ls_heranca-tipo_regra = 'GP' AND ls_heranca-id_grupo_produto = ls_material-id_grupo_produto.
+              set_value_and_return ls_heranca.
+            ELSEIF ls_heranca-tipo_regra = 'GE'.
               set_value_and_return ls_heranca.
             ENDIF.
 
@@ -4076,38 +4270,38 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
               ls_destino = ls_destinos_ativos.
             ENDIF.
 
-            DATA(ls_relation) = check_relation_premissa( is_destino     = ls_destino
-                                                         is_data        = is_data
-                                                         iv_modalidade  = iv_modalidade ).
+            DATA(ls_relation) = check_relation_premissa( is_destino    = ls_destino
+                                                         is_data       = is_data
+                                                         iv_modalidade = iv_modalidade ).
 
             "Todos marcados
             IF ls_relation <> 'XXX'.
               "rever esta chave
 
-              create_premissa( is_relation = ls_relation
-                               is_destino  = ls_destino
-                               is_data     = is_data
-                               iv_modalidade = iv_modalidade
+              create_premissa( is_relation    = ls_relation
+                               is_destino     = ls_destino
+                               is_data        = is_data
+                               iv_modalidade  = iv_modalidade
                                iv_with_parent = abap_true ).
             ENDIF.
 
           ENDDO.
 
         WHEN 'W'.
+*          break abap.
+          ls_destinos_ativos = lt_destinos_ativos[ id_ponto_centro = is_data-id_destino ].
 
-          ls_destinos_ativos = lt_destinos_ativos[ id_ponto = is_data-id_destino ].
-
-          ls_relation = check_relation_premissa( is_destino     = ls_destinos_ativos
-                                                       is_data        = is_data
-                                                       iv_modalidade  = iv_modalidade ).
+          ls_relation = check_relation_premissa( is_destino    = ls_destinos_ativos
+                                                 is_data       = is_data
+                                                 iv_modalidade = iv_modalidade ).
 
           "Todos marcados
           IF ls_relation <> 'XXX'.
             "rever esta chave
 
-            create_premissa( is_relation = ls_relation
-                             is_destino  = ls_destinos_ativos
-                             is_data     = is_data
+            create_premissa( is_relation   = ls_relation
+                             is_destino    = ls_destinos_ativos
+                             is_data       = is_data
                              iv_modalidade = iv_modalidade ).
           ENDIF.
 
@@ -4118,30 +4312,50 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
 
       LOOP AT lt_destinos_ativos INTO ls_destinos_ativos.
 
-        DO 2 TIMES.
+        IF NOT ls_destinos_ativos-id_grp_planta IS INITIAL.
 
-          "Com e Sem Centro
-          CASE sy-index.
-            WHEN 1.
-              ls_destino = ls_destinos_ativos.
-              CLEAR ls_destino-id_centro.
-            WHEN 2.
-              ls_destino = ls_destinos_ativos.
-          ENDCASE.
+          DO 2 TIMES.
 
-          ls_relation = check_relation_premissa( is_destino     = ls_destino
-                                                 is_data        = is_data
-                                                 iv_modalidade  = 'N' ).
+            "Com e Sem Centro
+            CASE sy-index.
+              WHEN 1.
+                ls_destino = ls_destinos_ativos.
+                CLEAR ls_destino-id_centro.
+              WHEN 2.
+                ls_destino = ls_destinos_ativos.
+            ENDCASE.
+
+            ls_relation = check_relation_premissa( is_destino    = ls_destino
+                                                   is_data       = is_data
+                                                   iv_modalidade = 'N' ).
+
+            IF ls_relation <> 'XXX'.
+              create_premissa( is_relation    = ls_relation
+                               is_destino     = ls_destino
+                               is_data        = is_data
+                               iv_modalidade  = iv_modalidade
+                               iv_with_parent = abap_true ).
+            ENDIF.
+*
+          ENDDO.
+
+        ELSE.
+
+          ls_destino = ls_destinos_ativos.
+
+          ls_relation = check_relation_premissa( is_destino    = ls_destino
+                                                 is_data       = is_data
+                                                 iv_modalidade = 'N' ).
 
           IF ls_relation <> 'XXX'.
-            create_premissa( is_relation = ls_relation
-                             is_destino  = ls_destino
-                             is_data     = is_data
-                             iv_modalidade = iv_modalidade
+            create_premissa( is_relation    = ls_relation
+                             is_destino     = ls_destino
+                             is_data        = is_data
+                             iv_modalidade  = iv_modalidade
                              iv_with_parent = abap_true ).
           ENDIF.
-*
-        ENDDO.
+
+        ENDIF.
 *
       ENDLOOP.
 
@@ -4251,9 +4465,9 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
               ENDCASE.
 
 
-              DATA(ls_relation) = check_relation_matriz( is_destino  = ls_destino
-                                                         is_data         = is_data
-                                                         iv_modalidade   = 'I' ).
+              DATA(ls_relation) = check_relation_matriz( is_destino    = ls_destino
+                                                         is_data       = is_data
+                                                         iv_modalidade = 'I' ).
 
               "Todos marcados
               IF ls_relation <> 'XXXXXX'.
@@ -4266,11 +4480,11 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
               ELSE.
 
                 append_matriz( is_relation    = ls_relation
-                                 is_destino     = ls_destino
-                                 is_data        = is_data
-                                 iv_modalidade  = 'I'
-                                 iv_with_parent = abap_true
-                                 ).
+                               is_destino     = ls_destino
+                               is_data        = is_data
+                               iv_modalidade  = 'I'
+                               iv_with_parent = abap_true
+                               ).
               ENDIF.
             ENDDO.
 
@@ -4278,63 +4492,93 @@ CLASS /QAPS/CL_RULE_SINCRONIZACAO IMPLEMENTATION.
         WHEN 'W'.
 *          BREAK c060863.
           LOOP AT lt_distr_logist INTO ls_distr_logist.
-            ls_relation = check_relation_matriz( is_destino  = ls_distr_logist
-                                                       is_data         = is_data
-                                                       iv_modalidade   = 'I' ).
+            ls_relation = check_relation_matriz( is_destino    = ls_distr_logist
+                                                 is_data       = is_data
+                                                 iv_modalidade = 'I' ).
 
             "Todos marcados
             IF ls_relation <> 'XXXXXX'.
-              create_matriz( is_relation    = ls_relation
-                             is_destino     = ls_distr_logist
-                             is_data        = is_data
-                             iv_modalidade  = 'I' ).
+              create_matriz( is_relation   = ls_relation
+                             is_destino    = ls_distr_logist
+                             is_data       = is_data
+                             iv_modalidade = 'I' ).
             ELSE.
 
-              append_matriz( is_relation    = ls_relation
-                               is_destino     = ls_distr_logist
-                               is_data        = is_data
-                               iv_modalidade  = 'I' ).
+              append_matriz( is_relation   = ls_relation
+                             is_destino    = ls_distr_logist
+                             is_data       = is_data
+                             iv_modalidade = 'I' ).
             ENDIF.
           ENDLOOP.
       ENDCASE.
 
       "Não possui Destino
     ELSEIF is_data-id_destino = mc_guid_null.
-*      BREAK c060863.
+*      BREAK abap.
       LOOP AT lt_distr_logist INTO ls_distr_logist.
 
-        DO 2 TIMES.
+        IF NOT ls_distr_logist-id_grp_planta IS INITIAL.
 
-          "Com e Sem Centro
-          CASE sy-index.
-            WHEN 1.
-              ls_destino = ls_distr_logist.
-              CLEAR ls_destino-id_centro.
-            WHEN 2.
-              ls_destino = ls_distr_logist.
-          ENDCASE.
+          DO 2 TIMES.
 
-          ls_relation = check_relation_matriz( is_destino  = ls_destino
-                                               is_data         = is_data
-                                               iv_modalidade   = 'I' ).
+            "Com e Sem Centro
+            CASE sy-index.
+              WHEN 1.
+                ls_destino = ls_distr_logist.
+                CLEAR ls_destino-id_centro.
+              WHEN 2.
+                ls_destino = ls_distr_logist.
+            ENDCASE.
 
-          IF ls_relation <> 'XXX'.
-            create_matriz( is_relation = ls_relation
-                           is_destino  = ls_destino
-                           is_data     = is_data
-                           iv_modalidade = 'I'
-                           iv_with_parent = abap_true ).
-          ELSE.
+            ls_relation = check_relation_matriz( is_destino    = ls_destino
+                                                 is_data       = is_data
+                                                 iv_modalidade = 'I' ).
 
-            append_matriz( is_relation    = ls_relation
+            IF ls_relation <> 'XXXXXX'.
+              create_matriz( is_relation    = ls_relation
+                             is_destino     = ls_destino
+                             is_data        = is_data
+                             iv_modalidade  = 'I'
+                             iv_with_parent = abap_true ).
+            ELSE.
+
+              append_matriz( is_relation    = ls_relation
                              is_destino     = ls_destino
                              is_data        = is_data
                              iv_modalidade  = 'I'
                              iv_with_parent = abap_true
                              ).
+            ENDIF.
+
+          ENDDO.
+
+        ELSE.
+
+          ls_destino = ls_distr_logist.
+*          IF ls_destino-werks = '1600'.
+*            BREAK abap.
+*          ENDIF.
+          ls_relation = check_relation_matriz( is_destino    = ls_destino
+                                               is_data       = is_data
+                                               iv_modalidade = 'I' ).
+
+          IF ls_relation <> 'XXXXXX'.
+            create_matriz( is_relation   = ls_relation
+                           is_destino    = ls_destino
+                           is_data       = is_data
+                           iv_modalidade = 'I' ).
+*                             iv_with_parent = abap_true ).
+          ELSE.
+
+            append_matriz( is_relation   = ls_relation
+                           is_destino    = ls_destino
+                           is_data       = is_data
+                           iv_modalidade = 'I' ).
+*                             iv_with_parent = abap_true
+*                             ).
           ENDIF.
 
-        ENDDO.
+        ENDIF.
 
       ENDLOOP.
 

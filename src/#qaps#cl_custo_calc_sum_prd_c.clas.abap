@@ -404,11 +404,11 @@ CLASS /QAPS/CL_CUSTO_CALC_SUM_PRD_C IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD SOLVE_STD_PRD_TOTAL_EXP_CONV_2.
+  METHOD solve_std_prd_total_exp_conv_2.
 
     DATA lv_fator_conversao TYPE /qaps/s_values-fator_conversao.
 
-    BREAK c060863.
+    BREAK abap.
     ms_simulacao = is_simulacao.
 
     "grp planta/werks - TODO
@@ -472,11 +472,11 @@ CLASS /QAPS/CL_CUSTO_CALC_SUM_PRD_C IMPLEMENTATION.
       ELSEIF <fs_expressao>-tipo_variavel = 'P' AND <fs_expressao>-tipo_node = 'E'.
 
         fill_custo_elementar_producao( EXPORTING iv_cod_grp_planta = cs_expressao-cod_grp_planta
-                                                 iv_werks = cs_expressao-werks
-                                                 iv_matnr = cs_expressao-matnr
-                                                 iv_id_origem = cs_expressao-id_origem
-                                                 iv_tipo_origem = cs_expressao-tipo_origem
-                                       CHANGING cs_expressao = <fs_expressao> ).
+                                                 iv_werks          = cs_expressao-werks
+                                                 iv_matnr          = cs_expressao-matnr
+                                                 iv_id_origem      = cs_expressao-id_origem
+                                                 iv_tipo_origem    = cs_expressao-tipo_origem
+                                       CHANGING  cs_expressao      = <fs_expressao> ).
       ELSEIF <fs_expressao>-tipo_node = 'R'.
         <fs_expressao>-calculated = 'X'.
       ENDIF.
@@ -486,7 +486,6 @@ CLASS /QAPS/CL_CUSTO_CALC_SUM_PRD_C IMPLEMENTATION.
     solve_expressao( ).
 
     "APLICAR CONVERSÃO
-*    BREAK c060863.
     LOOP AT mt_expressao ASSIGNING <fs_expressao>.
       CHECK <fs_expressao>-price_field = 'X'.
       DATA(ls_exp_conv) = lt_expressao_conversao[ id_calc_node = <fs_expressao>-id_calc_node ].

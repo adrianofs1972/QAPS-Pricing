@@ -104,6 +104,7 @@ CLASS /QAPS/CL_VIEW_TREE_PRM_SIMUL IMPLEMENTATION.
 
 
     mo_tree->add_node( EXPORTING node_key          = lv_nodekey
+                                 relationship  = cl_simple_tree_model=>relat_last_child
                                  relative_node_key = iv_parent
                                  isfolder          = ''
                                  text              = CONV #( lv_node_text )
@@ -284,12 +285,13 @@ CLASS /QAPS/CL_VIEW_TREE_PRM_SIMUL IMPLEMENTATION.
 
   METHOD node_double_click.
 
-    DATA(ls_nodes) = mt_nodes[ key = node_key ].
+    DATA(ls_nodes) = VALUE #( mt_nodes[ node_key = node_key ] OPTIONAL ).
 
+    CHECK NOT ls_nodes IS INITIAL.
     CHECK ls_nodes-trigger_event = abap_true.
 
-    mo_tree->node_get_text( EXPORTING node_key       =  node_key   " Node key
-                            IMPORTING text           =  DATA(lv_texto) ).
+    mo_tree->node_get_text( EXPORTING node_key = node_key   " Node key
+                            IMPORTING text     = DATA(lv_texto) ).
 
     RAISE EVENT on_node_double_click
       EXPORTING

@@ -4,6 +4,7 @@
   <asx:values>
    <DDLS>
     <DDLNAME>/QAPS/CDS_VAR_INPUT_PREM_SEM</DDLNAME>
+    <SOURCE_TYPE>V</SOURCE_TYPE>
    </DDLS>
   </asx:values>
  </asx:abap>

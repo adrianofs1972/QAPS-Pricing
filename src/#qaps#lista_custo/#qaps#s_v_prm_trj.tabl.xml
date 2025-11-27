@@ -15,6 +15,7 @@
      <ADMINFIELD>0</ADMINFIELD>
      <PRECFIELD>/QAPS/V_PRM_TRJ</PRECFIELD>
      <MASK>V     S</MASK>
+     <DDTEXT>Premissa - Trajeto</DDTEXT>
      <COMPTYPE>S</COMPTYPE>
     </DD03P>
     <DD03P>

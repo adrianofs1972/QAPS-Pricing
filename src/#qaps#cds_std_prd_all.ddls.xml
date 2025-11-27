@@ -4,6 +4,7 @@
   <asx:values>
    <DDLS>
     <DDLNAME>/QAPS/CDS_STD_PRD_ALL</DDLNAME>
+    <SOURCE_TYPE>V</SOURCE_TYPE>
    </DDLS>
   </asx:values>
  </asx:abap>

@@ -4,6 +4,7 @@
   <asx:values>
    <DDLS>
     <DDLNAME>/QAPS/V_VAR_INPUT_FULL</DDLNAME>
+    <SOURCE_TYPE>V</SOURCE_TYPE>
    </DDLS>
   </asx:values>
  </asx:abap>

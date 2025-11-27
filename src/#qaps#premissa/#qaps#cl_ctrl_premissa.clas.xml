@@ -5,7 +5,7 @@
    <VSEOCLASS>
     <CLSNAME>/QAPS/CL_CTRL_PREMISSA</CLSNAME>
     <LANGU>P</LANGU>
-    <DESCRIPT>QAPS: Controller Input Custo Elementares</DESCRIPT>
+    <DESCRIPT>QAPS: Controller Premissa</DESCRIPT>
     <STATE>1</STATE>
     <CLSCCINCL>X</CLSCCINCL>
     <FIXPT>X</FIXPT>
