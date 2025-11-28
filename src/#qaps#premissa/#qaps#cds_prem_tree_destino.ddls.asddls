@@ -15,6 +15,7 @@ left outer join /qaps/ponto as ponto            on    destino.id_grp_planta = po
     destino.tipo,
     destino.id_grp_planta,
     destino.codigo,
+    destino.id_ponto_centro,
     destino.id_centro,
     destino.werks,
     centro_por.id_porto,   
@@ -32,10 +33,12 @@ left outer join /qaps/porto as porto            on    centro_por.id_porto =  por
 left outer join /qaps/ponto as ponto            on    destino.id_centro = ponto.id_externo
 {       
     destino.mandt,
-    ponto.id_ponto as id_ponto,
+//    ponto.id_ponto as id_ponto,
+    ponto.id_externo as  id_ponto,
     destino.tipo,
     destino.id_grp_planta,
     destino.codigo,
+    destino.id_ponto_centro,
     destino.id_centro,
     destino.werks,
     centro_por.id_porto,   

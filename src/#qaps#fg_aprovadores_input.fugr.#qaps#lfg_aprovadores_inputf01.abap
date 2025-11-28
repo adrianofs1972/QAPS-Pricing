@@ -38,6 +38,7 @@ FORM fill_source.
   SELECT DISTINCT bname AS uname, name_text AS fullname
     FROM /qaps/v_users
     WHERE ( bname LIKE @srch_str OR name_text LIKE @srch_str )
+    AND   ustyp = 'A'
     INTO CORRESPONDING FIELDS OF TABLE @gt_source.
 
   IF lines( lr_user_exclude ) > 0.
@@ -87,11 +88,11 @@ FORM create_objects .
   CHECK gv_loaded = abap_false.
 
   go_cont_source = NEW cl_gui_custom_container( container_name = 'GO_SOURCE'
-                                                repid = sy-repid
-                                                dynnr = sy-dynnr ).
+                                                repid          = sy-repid
+                                                dynnr          = sy-dynnr ).
   go_cont_target = NEW cl_gui_custom_container( container_name = 'GO_TARGET'
-                                                repid = sy-repid
-                                                dynnr = sy-dynnr ).
+                                                repid          = sy-repid
+                                                dynnr          = sy-dynnr ).
 
   go_alv_source = NEW cl_gui_alv_grid( i_parent = go_cont_source ).
   go_alv_target = NEW cl_gui_alv_grid( i_parent = go_cont_target ).
@@ -104,20 +105,20 @@ FORM create_objects .
 
   go_alv_source->set_table_for_first_display(
     EXPORTING
-      is_layout                     = ls_layo_source    " Layout
+      is_layout       = ls_layo_source    " Layout
     CHANGING
-      it_outtab                     = gt_source    " Output Table
-      it_fieldcatalog               = lt_fcat     ).
+      it_outtab       = gt_source    " Output Table
+      it_fieldcatalog = lt_fcat ).
 
   ls_layo_target-grid_title = 'Aprovadores Vínculados'.
   ls_layo_target-no_toolbar = 'X'.
 
   go_alv_target->set_table_for_first_display(
     EXPORTING
-      is_layout                     = ls_layo_target
+      is_layout       = ls_layo_target
     CHANGING
-      it_outtab                     = gt_target    " Output Table
-      it_fieldcatalog               = lt_fcat     ).
+      it_outtab       = gt_target    " Output Table
+      it_fieldcatalog = lt_fcat ).
 
   gv_loaded = abap_true.
 

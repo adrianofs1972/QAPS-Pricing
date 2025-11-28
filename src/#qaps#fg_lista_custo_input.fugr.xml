@@ -71,7 +71,7 @@
       <TYPE>N</TYPE>
       <NEXTSCREEN>1000</NEXTSCREEN>
       <LINES>027</LINES>
-      <COLUMNS>137</COLUMNS>
+      <COLUMNS>140</COLUMNS>
      </HEADER>
      <CONTAINERS>
       <RPY_DYCATT>
@@ -242,6 +242,7 @@
        <VISLENGTH>021</VISLENGTH>
        <HEIGHT>001</HEIGHT>
        <FORMAT>CHAR</FORMAT>
+       <UP_LOWER>X</UP_LOWER>
        <INPUT_FLD>X</INPUT_FLD>
        <OUTPUT_FLD>X</OUTPUT_FLD>
       </RPY_DYFATC>
@@ -328,6 +329,52 @@
        <NAME>GS_DATA-DSC_MOEDA_LISTA</NAME>
        <TEXT>_______________________________________________</TEXT>
        <LINE>009</LINE>
+       <COLUMN>025</COLUMN>
+       <LENGTH>047</LENGTH>
+       <VISLENGTH>047</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+       <OUTPUTONLY>X</OUTPUTONLY>
+       <REQU_ENTRY>N</REQU_ENTRY>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEXT</TYPE>
+       <NAME>%#AUTOTEXT009</NAME>
+       <TEXT>Método_Custeio</TEXT>
+       <LINE>010</LINE>
+       <COLUMN>003</COLUMN>
+       <LENGTH>014</LENGTH>
+       <VISLENGTH>014</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>CHAR</FORMAT>
+       <REQU_ENTRY>N</REQU_ENTRY>
+       <LABELLEFT>X</LABELLEFT>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>GS_DATA-METODO_CUSTEIO</NAME>
+       <TEXT>_</TEXT>
+       <LINE>010</LINE>
+       <COLUMN>019</COLUMN>
+       <LENGTH>001</LENGTH>
+       <VISLENGTH>001</VISLENGTH>
+       <HEIGHT>001</HEIGHT>
+       <FORMAT>NUMC</FORMAT>
+       <INPUT_FLD>X</INPUT_FLD>
+       <OUTPUT_FLD>X</OUTPUT_FLD>
+      </RPY_DYFATC>
+      <RPY_DYFATC>
+       <CONT_TYPE>SCREEN</CONT_TYPE>
+       <CONT_NAME>SCREEN</CONT_NAME>
+       <TYPE>TEMPLATE</TYPE>
+       <NAME>GS_DATA-DSC_METODO_CUSTEIO</NAME>
+       <TEXT>_______________________________________________</TEXT>
+       <LINE>010</LINE>
        <COLUMN>025</COLUMN>
        <LENGTH>047</LENGTH>
        <VISLENGTH>047</VISLENGTH>

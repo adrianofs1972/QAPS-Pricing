@@ -108,7 +108,7 @@ protected section.
       !IS_MATERIAL_CENTRO type /QAPS/V_PLNT_MAT
       !IS_CUSTO_ELEMENTAR type /QAPS/CUSTO_ELM
       !IS_ORIGEM type /QAPS/S_V_PRM_MAT
-      !IS_TRAJETO type /QAPS/DIST_TRAJ
+      !IS_TRAJETO type /QAPS/S_DIST_TRAJ
     changing
       value(CT_VALUES) type /QAPS/T_VALUES .
   methods FILL_VALORES_ELEMENTARES
@@ -123,7 +123,7 @@ protected section.
     importing
       !IS_MATERIAL_CENTRO type /QAPS/V_PLNT_MAT
       !IS_ORIGEM type /QAPS/S_V_PRM_MAT
-      !IS_TRAJETO type /QAPS/DIST_TRAJ .
+      !IS_TRAJETO type /QAPS/S_DIST_TRAJ .
   methods GET_EXPRESSAO .
   methods GET_INITIAL_TABLE_VALUE
     returning
@@ -313,7 +313,7 @@ CLASS /QAPS/CL_CUSTO_CALCULATE_BASE IMPLEMENTATION.
   METHOD execute.
 
     DATA: lv_times   TYPE sy-index,
-          ls_trajeto TYPE /QAPS/DIST_TRAJ."/qaps/s_v_prm_trj.
+          ls_trajeto TYPE /qaps/s_dist_traj.
 
     ms_simulacao = is_simulacao.
 
@@ -325,7 +325,7 @@ CLASS /QAPS/CL_CUSTO_CALCULATE_BASE IMPLEMENTATION.
 
     LOOP AT it_origem INTO DATA(ls_origem).
 
-       IF lines( ls_origem-t_trajetos ) > 0.
+      IF lines( ls_origem-t_trajetos ) > 0.
         lv_times = lines( ls_origem-t_trajetos ).
       ELSE.
         lv_times = 1.
@@ -348,8 +348,8 @@ CLASS /QAPS/CL_CUSTO_CALCULATE_BASE IMPLEMENTATION.
 
         "Carregar variáveis elementares
         fill_variaveis_elementares( is_material_centro = is_material_centro
-                                    is_origem = ls_origem
-                                    is_trajeto = ls_trajeto ).
+                                    is_origem          = ls_origem
+                                    is_trajeto         = ls_trajeto ).
 
         "Resolver expressão
         solve_expressao( ).
@@ -360,6 +360,9 @@ CLASS /QAPS/CL_CUSTO_CALCULATE_BASE IMPLEMENTATION.
         <fs_return>-plant = is_material_centro-werks.
         <fs_return>-cod_trajeto = ls_trajeto-cod_trajeto.
         <fs_return>-desc_trajeto = ls_trajeto-descricao.
+        <fs_return>-t_dist_premissa = ls_origem-t_dist_premissa.
+        <fs_return>-trajeto      = ls_trajeto.
+
 
         CASE <fs_return>-tipo_origem.
           WHEN 'F'.
@@ -467,26 +470,28 @@ CLASS /QAPS/CL_CUSTO_CALCULATE_BASE IMPLEMENTATION.
       ON /qaps/var_input~id_destino = ponto~id_ponto
       WHERE id_custo_elementar = @is_custo_elementar-id_custo_elementar
       AND   ( id_origem = @is_origem-id_origem OR id_origem = @is_origem-id_origem_matriz )
-      and   /qaps/var_input~id_simulacao = @ms_simulacao-id_simulacao
+      AND   /qaps/var_input~id_simulacao = @ms_simulacao-id_simulacao
 *      AND   ( ( tipo_destino = 'G' and ponto~codigo = @is_material_centro-cod_grp_planta )
 *              or ( tipo_destino = 'W' and ponto~codigo = @is_material_centro-werks ) )
       INTO TABLE @DATA(lt_var_input).
 
-
     IF lines( lt_var_input ) = 0.
-*      BREAK-POINT.
       SELECT DISTINCT id_custo_elementar,id_var_input,tipo_regra,matnr,
            id_grupo_produto,agregador,mat_planejado,
-           tipo_origem,id_origem,tipo_destino,id_destino
+           tipo_origem,id_origem,tipo_destino,id_destino, ponto~codigo
       FROM /qaps/var_input
+      LEFT OUTER JOIN /qaps/v_ponto AS ponto
+      ON /qaps/var_input~id_destino = ponto~id_ponto
       WHERE id_custo_elementar = @is_custo_elementar-id_custo_elementar
-      and   id_simulacao = @ms_simulacao-id_simulacao
+      AND   id_simulacao = @ms_simulacao-id_simulacao
 *      AND   ( id_origem = @is_origem-id_origem OR id_origem = @is_origem-id_origem_matriz )
       INTO TABLE @lt_var_input.
     ENDIF.
 
-    IF line_exists( lt_var_input[ matnr = is_material_centro-matnr ] ).
-*                      AND NOT is_material_centro-matnr IS INITIAL.
+    IF line_exists( lt_var_input[ matnr = is_material_centro-matnr
+                                  tipo_regra = 'MA' ] )
+       AND NOT is_material_centro-matnr IS INITIAL.
+
       DATA(lt_var_input_aux) = lt_var_input.
       DELETE lt_var_input_aux WHERE matnr <> is_material_centro-matnr .
 
@@ -496,8 +501,10 @@ CLASS /QAPS/CL_CUSTO_CALCULATE_BASE IMPLEMENTATION.
 
       DATA(ls_var_input) = lt_var_input_aux[ matnr = is_material_centro-matnr ].
 
-    ELSEIF line_exists( lt_var_input[ agregador = is_material_centro-agregador ] ).
-*            and not is_material_centro-agregador is INITIAL.
+    ELSEIF line_exists( lt_var_input[ agregador = is_material_centro-agregador
+                                      tipo_regra = 'AG' ] )
+           AND NOT is_material_centro-agregador IS INITIAL.
+
       lt_var_input_aux = lt_var_input.
       DELETE lt_var_input_aux WHERE agregador <> is_material_centro-agregador.
 
@@ -506,8 +513,10 @@ CLASS /QAPS/CL_CUSTO_CALCULATE_BASE IMPLEMENTATION.
       ENDIF.
 
       ls_var_input = lt_var_input_aux[ agregador = is_material_centro-agregador ].
-    ELSEIF line_exists( lt_var_input[ mat_planejado = is_material_centro-mat_planejado ] ).
-*                      and not is_material_centro-mat_planejado is INITIAL.
+    ELSEIF line_exists( lt_var_input[ mat_planejado = is_material_centro-mat_planejado
+                                      tipo_regra = 'MP' ] )
+           AND NOT is_material_centro-mat_planejado IS INITIAL.
+
       lt_var_input_aux = lt_var_input.
       DELETE lt_var_input_aux WHERE mat_planejado <> is_material_centro-mat_planejado.
 
@@ -516,8 +525,10 @@ CLASS /QAPS/CL_CUSTO_CALCULATE_BASE IMPLEMENTATION.
       ENDIF.
 
       ls_var_input = lt_var_input_aux[ mat_planejado = is_material_centro-mat_planejado ].
-    ELSEIF line_exists( lt_var_input[ id_grupo_produto = is_material_centro-id_grupo_produto ] ).
-*              and is_material_centro-id_grupo_produto is INITIAL.
+    ELSEIF line_exists( lt_var_input[ id_grupo_produto = is_material_centro-id_grupo_produto
+                                      tipo_regra = 'GP' ] )
+              AND is_material_centro-id_grupo_produto IS INITIAL.
+
       lt_var_input_aux = lt_var_input.
       DELETE lt_var_input_aux WHERE id_grupo_produto <> is_material_centro-id_grupo_produto.
 
@@ -525,7 +536,7 @@ CLASS /QAPS/CL_CUSTO_CALCULATE_BASE IMPLEMENTATION.
         DELETE lt_var_input_aux WHERE codigo <> is_material_centro-cod_grp_planta.
       ENDIF.
 
-      ls_var_input = value #( lt_var_input_aux[ id_grupo_produto = is_material_centro-id_grupo_produto ] OPTIONAL ).
+      ls_var_input = VALUE #( lt_var_input_aux[ id_grupo_produto = is_material_centro-id_grupo_produto ] OPTIONAL ).
 
     ELSE.
       ls_var_input = VALUE #( lt_var_input[ tipo_regra = 'GE' ] OPTIONAL ).
@@ -537,7 +548,7 @@ CLASS /QAPS/CL_CUSTO_CALCULATE_BASE IMPLEMENTATION.
      FROM /qaps/var_input
      WHERE id_custo_elementar = @is_custo_elementar-id_custo_elementar
      AND   id_var_input = @ls_var_input-id_var_input
-     and   id_simulacao = @ms_simulacao-id_simulacao
+     AND   id_simulacao = @ms_simulacao-id_simulacao
      INTO TABLE @DATA(lt_valores).
 
 *    if is_custo_elementar-tipo_dado = '1'.

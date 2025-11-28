@@ -338,7 +338,7 @@ CLASS /QAPS/CL_CTRL_LISTA_CUSTO IMPLEMENTATION.
         rows                    = 2
         columns                 = 1 ).
 
-    mo_splitter_child->set_row_height( id = 1 height = 14 ).
+    mo_splitter_child->set_row_height( id = 1 height = 15 ).
 
     "Html Header
     return-header = mo_splitter_child->get_container( row       = 1    " Row

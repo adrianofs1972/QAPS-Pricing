@@ -54,6 +54,9 @@ ENDMODULE.
 MODULE f4_moeda_lista INPUT.
   PERFORM f4_moeda_lista.
 ENDMODULE.
+MODULE f4_metodo_custeio INPUT.
+  PERFORM f4_metodo_custeio.
+ENDMODULE.
 *&---------------------------------------------------------------------*
 *&      Module  FILL_WERKS  INPUT
 *&---------------------------------------------------------------------*
@@ -72,6 +75,18 @@ MODULE fill_moeda_lista INPUT.
     CATCH /qaps/cx_general.  "
       CLEAR gs_data-moeda_lista.
   ENDTRY.
+ENDMODULE.
+MODULE fill_fonte_cambio INPUT.
+  PERFORM fill_fonte_cambio.
+
+*  TRY.
+*      gs_data-dsc_moeda_lista = /qaps/cl_helper_text=>get_waers_text( gs_data-moeda_lista ).
+*    CATCH /qaps/cx_general.  "
+*      CLEAR gs_data-moeda_lista.
+*  ENDTRY.
+ENDMODULE.
+MODULE fill_metodo_custeio INPUT.
+  PERFORM fill_metodo_custeio.
 ENDMODULE.
 
 MODULE fill_id_simulacao INPUT.

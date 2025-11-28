@@ -6,7 +6,8 @@ DATA: gv_loaded      TYPE abap_bool,
       gv_search      TYPE char30,
       gv_tiltle      TYPE char30.
 
-DATA gs_data TYPE /qaps/s_lista_header.
+DATA: gs_data  TYPE /qaps/s_lista_header,
+      gs_fonte TYPE /qaps/fonte_cmb.
 
 DATA gv_option TYPE c VALUE 'W'.
 

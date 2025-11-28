@@ -2905,21 +2905,41 @@ CLASS /QAPS/CL_MDL_PREMISSA IMPLEMENTATION.
       FROM /qaps/v_pr_st_rs
       FOR ALL ENTRIES IN @return
       WHERE id_premissa = @return-id_premissa
-      and   id_simulacao = @return-id_simulacao
+      AND   id_simulacao = @return-id_simulacao
       INTO TABLE @DATA(lt_status).
 
     LOOP AT return ASSIGNING FIELD-SYMBOL(<fs>).
 
-      DATA(lt_aux) = lt_status.
-      DELETE lt_aux WHERE id_premissa <> <fs>-id_premissa
-                      and id_simulacao <> <fs>-id_simulacao.
+      IF NOT <fs>-id_grp_planta IS INITIAL.
 
-      IF line_exists( lt_aux[ red = 'X' ] ).
-        <fs>-red = 'X'.
-      ELSEIF line_exists( lt_aux[ yellow = 'X' ] ).
-        <fs>-yellow = 'X'.
-      ELSEIF line_exists( lt_aux[ green = 'X' ] ).
-        <fs>-green = 'X'.
+        DATA(lt_aux) = lt_status.
+        DELETE lt_aux WHERE id_premissa <> <fs>-id_premissa
+                        AND id_simulacao <> <fs>-id_simulacao.
+
+        IF line_exists( lt_aux[ red = 'X' ] ).
+          <fs>-red = 'X'.
+        ELSEIF line_exists( lt_aux[ yellow = 'X' ] ).
+          <fs>-yellow = 'X'.
+        ELSEIF line_exists( lt_aux[ green = 'X' ] ).
+          <fs>-green = 'X'.
+        ENDIF.
+
+      ELSEIF <fs>-id_grp_planta IS INITIAL.
+
+        lt_aux = lt_status.
+        DELETE lt_aux WHERE id_premissa  <> <fs>-id_premissa
+                        or  id_simulacao <> <fs>-id_simulacao
+                        or  werks        <> <fs>-werks.
+
+        IF line_exists( lt_aux[ red = 'X' ] ).
+          <fs>-red = 'X'.
+        ELSEIF line_exists( lt_aux[ yellow = 'X' ] ).
+          <fs>-yellow = 'X'.
+        ELSEIF line_exists( lt_aux[ green = 'X' ] ).
+          <fs>-green = 'X'.
+        ENDIF.
+
+
       ENDIF.
 
     ENDLOOP.
@@ -2933,7 +2953,7 @@ CLASS /QAPS/CL_MDL_PREMISSA IMPLEMENTATION.
         SELECT *
           FROM /qaps/v_prm_hdr
           WHERE id_grp_planta = @<fs>-id_grp_planta
-          and   id_simulacao = @<fs>-id_simulacao
+          AND   id_simulacao = @<fs>-id_simulacao
 *        AND   id_centro = '00000000000000000000000000000000'"@mc_guid_null
           INTO CORRESPONDING FIELDS OF TABLE @lt_parent.
 
@@ -2941,11 +2961,39 @@ CLASS /QAPS/CL_MDL_PREMISSA IMPLEMENTATION.
           FROM /qaps/v_pr_st_rs
           FOR ALL ENTRIES IN @lt_parent
           WHERE id_premissa = @lt_parent-id_premissa
-          and   id_simulacao = @lt_parent-id_simulacao
+          AND   id_simulacao = @lt_parent-id_simulacao
           INTO TABLE @lt_status.
 
         DELETE lt_parent WHERE id_centro <> mc_guid_null.
         DATA(ls_parent) = lt_parent[ 1 ].
+
+        IF line_exists( lt_status[ red = 'X' ] ).
+          <fs>-red = 'X'.
+        ELSEIF line_exists( lt_status[ yellow = 'X' ] ).
+          <fs>-yellow = 'X'.
+        ELSEIF line_exists( lt_status[ green = 'X' ] ).
+          <fs>-green = 'X'.
+        ENDIF.
+
+      ELSEIF <fs>-id_grp_planta = mc_guid_null AND
+             <fs>-id_centro  <> mc_guid_null.
+
+        SELECT *
+          FROM /qaps/v_prm_hdr
+          WHERE id_grp_planta = @<fs>-id_grp_planta
+          AND   id_simulacao = @<fs>-id_simulacao
+          AND   id_centro = @<fs>-id_centro
+          INTO CORRESPONDING FIELDS OF TABLE @lt_parent.
+
+        SELECT *
+          FROM /qaps/v_pr_st_rs
+          FOR ALL ENTRIES IN @lt_parent
+          WHERE id_premissa = @lt_parent-id_premissa
+          AND   id_simulacao = @lt_parent-id_simulacao
+          INTO TABLE @lt_status.
+
+        DELETE lt_parent WHERE id_centro <> <fs>-id_centro.
+        ls_parent = lt_parent[ 1 ].
 
         IF line_exists( lt_status[ red = 'X' ] ).
           <fs>-red = 'X'.

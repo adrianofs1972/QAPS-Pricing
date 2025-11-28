@@ -236,8 +236,11 @@ CLASS /QAPS/CL_CUSTO_CALC_STD_PRD IMPLEMENTATION.
 
   METHOD get_std_producao_conversao.
 
-    DATA: lv_matnr      TYPE matnr,
-          lv_componente TYPE matnr.
+    DATA: lv_matnr       TYPE matnr,
+          lv_componente  TYPE matnr,
+          lv_premissa    TYPE /qaps/percentual,
+          lv_trajeto     TYPE /qaps/percentual,
+          lv_coeficiente TYPE /qaps/percentual.
 
     DATA: lt_return TYPE /qaps/t_retorno_calculo,
           ls_total  TYPE /qaps/s_retorno_calculo.
@@ -250,7 +253,7 @@ CLASS /QAPS/CL_CUSTO_CALC_STD_PRD IMPLEMENTATION.
       AND   categoria = 'C'
       AND   ( werks         = @is_material_centro-werks
       OR      id_grp_planta = @is_material_centro-id_grp_planta )
-      and   id_std_producao = @ms_simulacao-id_std_producao
+      AND   id_std_producao = @ms_simulacao-id_std_producao
       INTO @DATA(ls_prod_acabado).
 
     lv_matnr = |{ is_material_centro-matnr ALPHA = OUT }|.
@@ -261,7 +264,7 @@ CLASS /QAPS/CL_CUSTO_CALC_STD_PRD IMPLEMENTATION.
       FROM /qaps/std_prd_cp
 *      FOR ALL ENTRIES IN @lt_prod_acabado
       WHERE id_std_prod_pa = @ls_prod_acabado-id_std_prod_pa
-      and   id_std_producao = @ms_simulacao-id_std_producao
+      AND   id_std_producao = @ms_simulacao-id_std_producao
       INTO TABLE @DATA(lt_componentes).
 
 
@@ -329,15 +332,61 @@ CLASS /QAPS/CL_CUSTO_CALC_STD_PRD IMPLEMENTATION.
 
     CHECK lines( return ) > 0.
 
-    DATA(ls_source) = return[ 1 ].
-    ls_total = CORRESPONDING #( ls_source ).
-    ls_total-matnr = |{ ls_source-std_prd_pa ALPHA = IN WIDTH = 18 }|..
-    ls_total-std_prd_total = abap_true.
+*    BREAK abap.
+    DATA lv_first TYPE abap_bool.
 
+    LOOP AT return ASSIGNING FIELD-SYMBOL(<fs_return>).
+
+      IF sy-tabix = 1.
+        ls_total = CORRESPONDING #( <fs_return> ).
+        ls_total-matnr = |{ <fs_return>-std_prd_pa ALPHA = IN WIDTH = 18 }|.
+        ls_total-std_prd_total = abap_true.
+        lv_first = abap_true.
+      ELSE.
+        lv_first = abap_false.
+      ENDIF.
+
+      LOOP AT <fs>-t_expressao ASSIGNING <fs_expressao>.
+        CHECK <fs_expressao>-price_field = 'X'.
+
+        ASSIGN ls_total-t_expressao[ id_custo_elementar = <fs_expressao>-id_custo_elementar ]
+              TO FIELD-SYMBOL(<fs_total_expr>).
+
+        LOOP AT <fs_expressao>-t_valores ASSIGNING <fs_valores>.
+
+          ASSIGN <fs_total_expr>-t_valores[ periodo = <fs_valores>-periodo ] TO
+             FIELD-SYMBOL(<fs_total_valores>).
+
+          lv_premissa = ( <fs>-t_dist_premissa[ periodo = <fs_valores>-periodo ]-percentual ) / 100.
+          lv_trajeto  = ( <fs>-trajeto-t_dist_trajeto[ periodo = <fs_valores>-periodo ]-percentual ) / 100.
+
+          lv_coeficiente = lv_premissa * lv_trajeto.
+
+          IF lv_first = abap_true.
+            <fs_total_valores>-valor = ( <fs_valores>-valor * lv_coeficiente ).
+          ELSE.
+            <fs_total_valores>-valor = <fs_total_valores>-valor + ( <fs_valores>-valor * lv_coeficiente ).
+          ENDIF.
+
+        ENDLOOP.
+      ENDLOOP.
+
+      fill_moeda_saida( CHANGING ct_expressao = ls_total-t_expressao ).
+
+    ENDLOOP.
+
+*    DATA(ls_source) = return[ 1 ].
+*    ls_total = CORRESPONDING #( ls_source ).
+*    ls_total-matnr = |{ ls_source-std_prd_pa ALPHA = IN WIDTH = 18 }|.
+*    ls_total-std_prd_total = abap_true.
+
+    break abap.
     mo_calc_producao_conv->solve_std_prd_total_exp_conv_2(
-                                                              EXPORTING is_simulacao = ms_simulacao
-                                                              CHANGING cs_expressao = ls_total
-                                                        ).
+      EXPORTING
+        is_simulacao = ms_simulacao
+      CHANGING
+        cs_expressao = ls_total
+    ).
 
     APPEND ls_total TO return.
 
@@ -348,20 +397,29 @@ CLASS /QAPS/CL_CUSTO_CALC_STD_PRD IMPLEMENTATION.
   METHOD get_std_producao_producao.
 
     DATA: lv_matnr      TYPE matnr,
-          lv_componente TYPE matnr.
+          lv_componente TYPE matnr,
+          lv_where      type string.
 
     DATA: lt_return TYPE /qaps/t_retorno_calculo,
           ls_total  TYPE /qaps/s_retorno_calculo.
 
     ms_simulacao = is_simulacao.
 
-*    break c060863.
+*    break abap.
+    if not is_material_centro-werks is INITIAL and not is_material_centro-id_grp_planta is INITIAL.
+      lv_where = ` werks = @is_material_centro-werks  `.
+      lv_where = lv_where && ` and id_grp_planta = @is_material_centro-id_grp_planta `.
+    elseif not is_material_centro-werks is INITIAL and is_material_centro-id_grp_planta is INITIAL.
+      lv_where = ` werks = @is_material_centro-werks  `.
+    elseif is_material_centro-werks is INITIAL and not is_material_centro-id_grp_planta is INITIAL.
+      lv_where =  ` id_grp_planta = @is_material_centro-id_grp_planta  `.
+    endif.
+
     SELECT SINGLE *
       FROM /qaps/std_prd_pa
       WHERE matnr = @is_material_centro-matnr
       AND   categoria = 'P'
-      AND   ( werks         = @is_material_centro-werks
-      OR      id_grp_planta = @is_material_centro-id_grp_planta )
+      AND   (lv_where)
       and   id_std_producao = @ms_simulacao-id_std_producao
       INTO @DATA(ls_prod_acabado).
 

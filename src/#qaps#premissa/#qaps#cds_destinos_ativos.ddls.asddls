@@ -11,6 +11,7 @@ select distinct from /qaps/cds_prem_tree_destino
     tipo,
     id_grp_planta,
     codigo,
+    id_ponto_centro,
     id_centro,
     werks,
 //    id_porto,

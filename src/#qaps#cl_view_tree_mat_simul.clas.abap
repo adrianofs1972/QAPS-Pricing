@@ -92,17 +92,20 @@ CLASS /QAPS/CL_VIEW_TREE_MAT_SIMUL IMPLEMENTATION.
       lv_icon = icon_locked.
     ENDIF.
 
+*    break abap.
+
     DATA(lv_id) = |{ <fs_line>-id_simulacao ALPHA = OUT }|.
     CONDENSE lv_id.
 
     mv_destino = mv_destino + 1.
     lv_nodekey = |{ iv_parent }_{ mv_destino }|.
-    DATA(lv_node_text) = | { <fs_line>-werks }|.
+    DATA(lv_node_text) = |{ <fs_line>-werks }|.
 
     mo_tree->get_all_node_keys( IMPORTING node_key_table = DATA(lt_keys) ).
 
 
     mo_tree->add_node( EXPORTING node_key          = lv_nodekey
+                                 relationship  = cl_simple_tree_model=>relat_last_child
                                  relative_node_key = iv_parent
                                  isfolder          = ''
                                  text              = CONV #( lv_node_text )
@@ -284,13 +287,14 @@ CLASS /QAPS/CL_VIEW_TREE_MAT_SIMUL IMPLEMENTATION.
   METHOD node_double_click.
 
 *    CHECK node_key <> 'Root'.
+*    BREAK abap.
+    DATA(ls_nodes) = VALUE #( mt_nodes[ node_key = node_key ] OPTIONAL ).
 
-    DATA(ls_nodes) = mt_nodes[ key = node_key ].
-
+    CHECK NOT ls_nodes IS INITIAL.
     CHECK ls_nodes-trigger_event = abap_true.
 
-    mo_tree->node_get_text( EXPORTING node_key       =  node_key   " Node key
-                            IMPORTING text           =  DATA(lv_texto) ).
+    mo_tree->node_get_text( EXPORTING node_key = node_key   " Node key
+                            IMPORTING text     = DATA(lv_texto) ).
 
     RAISE EVENT on_node_double_click
       EXPORTING

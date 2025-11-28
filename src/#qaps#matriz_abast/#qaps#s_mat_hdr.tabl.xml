@@ -8,6 +8,7 @@
     <TABCLASS>INTTAB</TABCLASS>
     <LANGDEP>X</LANGDEP>
     <DDTEXT>Matriz Abast Header</DDTEXT>
+    <ACTFLAG>U</ACTFLAG>
    </DD02V>
    <DD03P_TABLE>
     <DD03P>
@@ -15,6 +16,7 @@
      <ADMINFIELD>0</ADMINFIELD>
      <PRECFIELD>/QAPS/V_MAT_HDR</PRECFIELD>
      <MASK>V     S</MASK>
+     <DDTEXT>View Matriz Hdr</DDTEXT>
      <COMPTYPE>S</COMPTYPE>
     </DD03P>
     <DD03P>

@@ -1783,6 +1783,11 @@ CLASS /QAPS/CL_MDL_LISTA_CUSTO IMPLEMENTATION.
         status = iv_status
     WHERE cod_lista_custo = iv_cod_lista_custo.
 
+    UPDATE /qaps/lista_hdr
+    SET metodo_custeio = 1
+    WHERE cod_lista_custo = iv_cod_lista_custo
+    AND   metodo_custeio = 0.
+
     COMMIT WORK AND WAIT.
 
   ENDMETHOD.
